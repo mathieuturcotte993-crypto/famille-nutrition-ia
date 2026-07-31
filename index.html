@@ -117,152 +117,173 @@ footer{text-align:center;color:var(--mut);font-size:12px;padding:18px}
 </head>
 <body>
 <header>
-  <div class="brand">
-    <div class="logo">FN</div>
-    <div>
-      <h1>Famille Nutrition IA</h1>
-      <p>Macros, rabais de circulaires, recettes et épicerie automatisés</p>
-    </div>
-  </div>
-  <div class="hactions">
-    <span class="pill" id="aiState">IA non configurée</span>
-    <button class="btn ghost" id="btnSettings">Réglages</button>
-  </div>
+<div class="brand">
+<div class="logo">FN</div>
+<div>
+<h1>Famille Nutrition IA</h1>
+<p>Macros, rabais de circulaires, recettes et épicerie automatisés</p>
+</div>
+</div>
+<div class="hactions">
+<span class="pill" id="aiState">IA non configurée</span>
+<button class="btn ghost" id="btnSettings">Réglages</button>
+</div>
 </header>
 
 <nav class="tabs" id="tabs">
-  <button class="tab active" data-page="famille"><b>1</b> Famille <span>&amp; macros</span></button>
-  <button class="tab" data-page="rabais"><b>2</b> Rabais <span>de la semaine</span></button>
-  <button class="tab" data-page="recettes"><b>3</b> Recettes <span>IA</span></button>
-  <button class="tab" data-page="epicerie"><b>4</b> Liste <span>d'épicerie</span></button>
+<button class="tab active" data-page="famille"><b>1</b> Famille <span>&amp; macros</span></button>
+<button class="tab" data-page="rabais"><b>2</b> Rabais <span>de la semaine</span></button>
+<button class="tab" data-page="recettes"><b>3</b> Recettes <span>IA</span></button>
+<button class="tab" data-page="epicerie"><b>4</b> Liste <span>d'épicerie</span></button>
+<button class="tab" data-page="recherche"><b>5</b> Recherche <span>produit</span></button>
 </nav>
 
 <main>
 
 <section class="page active" id="page-famille">
-  <div class="pagehead">
-    <div>
-      <h2>1. La famille</h2>
-      <p class="mut">Une fiche par personne : âge, calories quotidiennes, répartition des macronutriments et restrictions alimentaires. Ces données servent ensuite aux recettes et aux quantités.</p>
-    </div>
-    <div class="row wrap">
-      <button class="btn" id="btnAddMembre">+ Ajouter une personne</button>
-    </div>
-  </div>
-  <div class="card" id="familleResume"></div>
-  <div class="grid" id="membresList"></div>
+<div class="pagehead">
+<div>
+<h2>1. La famille</h2>
+<p class="mut">Une fiche par personne : âge, calories quotidiennes, répartition des macronutriments et restrictions alimentaires. Ces données servent ensuite aux recettes et aux quantités.</p>
+</div>
+<div class="row wrap">
+<button class="btn" id="btnAddMembre">+ Ajouter une personne</button>
+</div>
+</div>
+<div class="card" id="familleResume"></div>
+<div class="grid" id="membresList"></div>
 </section>
 
 <section class="page" id="page-rabais">
-  <div class="pagehead">
-    <div>
-      <h2>2. Rabais de la semaine</h2>
-      <p class="mut">Choisissez votre ville et vos magasins : l'IA cherche les circulaires de la semaine et retient les meilleures aubaines.</p>
-    </div>
-  </div>
-  <div class="card">
-    <div class="formgrid">
-      <label>Ville actuelle
-        <input id="ville" list="villes" placeholder="Ex. : Sherbrooke">
-      </label>
-      <label>Province / région
-        <input id="province" placeholder="QC" value="QC">
-      </label>
-      <label>Code postal (optionnel)
-        <input id="codePostal" placeholder="J1H 1A1">
-      </label>
-      <label>Semaine du
-        <input type="date" id="semaine">
-      </label>
-    </div>
-    <datalist id="villes"></datalist>
-    <div class="lab">Magasins à analyser</div>
-    <div class="chips" id="magasinsRabais"></div>
-    <div class="row wrap mt">
-      <button class="btn" id="btnGenRabais">Générer les rabais avec l'IA</button>
-      <button class="btn ghost" id="btnPasteCirc">Coller une circulaire</button>
-      <button class="btn ghost" id="btnAddRabais">+ Item manuel</button>
-      <button class="btn ghost danger" id="btnClearRabais">Vider la liste</button>
-    </div>
-    <div id="circBox" class="hidden mt">
-      <label>Texte de la circulaire (copier-coller depuis le site ou l'application du magasin)
-        <textarea id="circText" rows="6" placeholder="Poulet entier 2,99 $/lb ... Brocoli 1,49 $ ..."></textarea>
-      </label>
-      <button class="btn mini" id="btnParseCirc">Extraire les rabais de ce texte</button>
-    </div>
-    <div class="status" id="rabaisStatus"></div>
-  </div>
-  <div class="card">
-    <div class="kpis" id="rabaisKpis"></div>
-    <div class="tbwrap mt" id="rabaisTable"></div>
-  </div>
-  <div class="card hidden" id="rabaisSources"></div>
+<div class="pagehead">
+<div>
+<h2>2. Rabais de la semaine</h2>
+<p class="mut">Choisissez votre ville et vos magasins : l'IA cherche les circulaires de la semaine et retient les meilleures aubaines.</p>
+</div>
+</div>
+<div class="card">
+<div class="formgrid">
+<label>Ville actuelle
+<input id="ville" list="villes" placeholder="Ex. : Sherbrooke">
+</label>
+<label>Province / région
+<input id="province" placeholder="QC" value="QC">
+</label>
+<label>Code postal (optionnel)
+<input id="codePostal" placeholder="J1H 1A1">
+</label>
+<label>Semaine du
+<input type="date" id="semaine">
+</label>
+</div>
+<datalist id="villes"></datalist>
+<div class="lab">Magasins à analyser</div>
+<div class="chips" id="magasinsRabais"></div>
+<div class="row wrap mt">
+<button class="btn" id="btnGenRabais">Générer les rabais avec l'IA</button>
+<button class="btn ghost" id="btnPasteCirc">Coller une circulaire</button>
+<button class="btn ghost" id="btnAddRabais">+ Item manuel</button>
+<button class="btn ghost danger" id="btnClearRabais">Vider la liste</button>
+</div>
+<div id="circBox" class="hidden mt">
+<label>Texte de la circulaire (copier-coller depuis le site ou l'application du magasin)
+<textarea id="circText" rows="6" placeholder="Poulet entier 2,99 $/lb ... Brocoli 1,49 $ ..."></textarea>
+</label>
+<button class="btn mini" id="btnParseCirc">Extraire les rabais de ce texte</button>
+</div>
+<div class="status" id="rabaisStatus"></div>
+</div>
+<div class="card">
+<div class="kpis" id="rabaisKpis"></div>
+<div class="tbwrap mt" id="rabaisTable"></div>
+</div>
+<div class="card hidden" id="rabaisSources"></div>
 </section>
 
 <section class="page" id="page-recettes">
-  <div class="pagehead">
-    <div>
-      <h2>3. Recettes proposées</h2>
-      <p class="mut">L'IA combine les rabais cochés et les profils de la famille pour proposer des recettes économiques qui respectent les calories, les macros et les restrictions.</p>
-    </div>
-  </div>
-  <div class="card">
-    <div class="formgrid">
-      <label>Nombre de jours
-        <input type="number" id="rJours" value="5" min="1" max="14">
-      </label>
-      <label>Temps max par recette (min)
-        <input type="number" id="rTemps" value="45" min="10" max="180">
-      </label>
-      <label>Budget cible ($)
-        <input type="number" id="rBudget" value="150" min="0" step="10">
-      </label>
-      <label>Style de cuisine
-        <input id="rStyle" placeholder="familial, quebecois, italien...">
-      </label>
-    </div>
-    <div class="lab">Repas à générer</div>
-    <div class="chips" id="rRepas"></div>
-    <label class="check"><input type="checkbox" id="rOnlyDeals" checked> Maximiser l'utilisation des items en rabais cochés</label>
-    <label class="check"><input type="checkbox" id="rRestes"> Prévoir des portions supplémentaires (restes pour les lunchs)</label>
-    <div class="row wrap mt">
-      <button class="btn" id="btnGenRecettes">Générer les recettes avec l'IA</button>
-      <button class="btn ghost" id="btnSelectAllRec">Tout choisir</button>
-      <button class="btn ghost danger" id="btnClearRecettes">Vider</button>
-    </div>
-    <div class="status" id="recettesStatus"></div>
-  </div>
-  <div class="card" id="recettesResume"></div>
-  <div class="grid2" id="recettesList"></div>
+<div class="pagehead">
+<div>
+<h2>3. Recettes proposées</h2>
+<p class="mut">L'IA combine les rabais cochés et les profils de la famille pour proposer des recettes économiques qui respectent les calories, les macros et les restrictions.</p>
+</div>
+</div>
+<div class="card">
+<div class="formgrid">
+<label>Nombre de jours
+<input type="number" id="rJours" value="5" min="1" max="14">
+</label>
+<label>Temps max par recette (min)
+<input type="number" id="rTemps" value="45" min="10" max="180">
+</label>
+<label>Budget cible ($)
+<input type="number" id="rBudget" value="150" min="0" step="10">
+</label>
+<label>Style de cuisine
+<input id="rStyle" placeholder="familial, quebecois, italien...">
+</label>
+</div>
+<div class="lab">Repas à générer</div>
+<div class="chips" id="rRepas"></div>
+<label class="check"><input type="checkbox" id="rOnlyDeals" checked> Maximiser l'utilisation des items en rabais cochés</label>
+<label class="check"><input type="checkbox" id="rRestes"> Prévoir des portions supplémentaires (restes pour les lunchs)</label>
+<div class="row wrap mt">
+<button class="btn" id="btnGenRecettes">Générer les recettes avec l'IA</button>
+<button class="btn ghost" id="btnSelectAllRec">Tout choisir</button>
+<button class="btn ghost danger" id="btnClearRecettes">Vider</button>
+</div>
+<div class="status" id="recettesStatus"></div>
+</div>
+<div class="card" id="recettesResume"></div>
+<div class="grid2" id="recettesList"></div>
 </section>
 
 <section class="page" id="page-epicerie">
-  <div class="pagehead">
-    <div>
-      <h2>4. Liste d'épicerie</h2>
-      <p class="mut">Générée automatiquement à partir des recettes choisies, regroupée par épicerie accessible et par rayon.</p>
-    </div>
-  </div>
-  <div class="card">
-    <div class="lab">Épiceries accessibles</div>
-    <div class="chips" id="magasinsAcces"></div>
-    <div class="row wrap">
-      <input id="newMagasin" placeholder="Ajouter une épicerie..." style="max-width:240px">
-      <button class="btn ghost mini" id="btnAddMagasin">+ Ajouter</button>
-    </div>
-    <div class="row wrap mt">
-      <button class="btn" id="btnGenListe">Générer la liste</button>
-      <button class="btn ghost" id="btnOptimAI">Optimiser avec l'IA</button>
-      <button class="btn ghost" id="btnAddArticle">+ Article</button>
-      <button class="btn ghost" id="btnCopyListe">Copier</button>
-      <button class="btn ghost" id="btnExportListe">Exporter .txt</button>
-      <button class="btn ghost" id="btnPrint">Imprimer</button>
-      <button class="btn ghost danger" id="btnResetChecks">Tout décocher</button>
-    </div>
-    <div class="status" id="epicerieStatus"></div>
-  </div>
-  <div class="card" id="epicerieKpis"></div>
-  <div id="epicerieList"></div>
+<div class="pagehead">
+<div>
+<h2>4. Liste d'épicerie</h2>
+<p class="mut">Générée automatiquement à partir des recettes choisies, regroupée par épicerie accessible et par rayon.</p>
+</div>
+</div>
+<div class="card">
+<div class="lab">Épiceries accessibles</div>
+<div class="chips" id="magasinsAcces"></div>
+<div class="row wrap">
+<input id="newMagasin" placeholder="Ajouter une épicerie..." style="max-width:240px">
+<button class="btn ghost mini" id="btnAddMagasin">+ Ajouter</button>
+</div>
+<div class="row wrap mt">
+<button class="btn" id="btnGenListe">Générer la liste</button>
+<button class="btn ghost" id="btnOptimAI">Optimiser avec l'IA</button>
+<button class="btn ghost" id="btnAddArticle">+ Article</button>
+<button class="btn ghost" id="btnCopyListe">Copier</button>
+<button class="btn ghost" id="btnExportListe">Exporter .txt</button>
+<button class="btn ghost" id="btnExportWord">Exporter Word (recettes + épicerie)</button>
+<button class="btn ghost" id="btnPrint">Imprimer</button>
+<button class="btn ghost danger" id="btnResetChecks">Tout décocher</button>
+</div>
+<div class="status" id="epicerieStatus"></div>
+</div>
+<div class="card" id="epicerieKpis"></div>
+<div id="epicerieList"></div>
+</section>
+
+<section class="page" id="page-recherche">
+<div class="pagehead">
+<div>
+<h2>5. Recherche d'un produit</h2>
+<p class="mut">Écrivez un produit précis (ex. : oeufs, poulet haché, beurre d'arachide) : l'IA compare les circulaires de la semaine pour votre ville et vos magasins, et indique l'endroit le moins cher pour l'acheter.</p>
+</div>
+</div>
+<div class="card">
+<div class="row wrap">
+<input id="rechProduit" placeholder="Ex. : oeufs" style="max-width:320px">
+<button class="btn" id="btnRechProduit">Trouver le moins cher</button>
+</div>
+<p class="mut small mt">Utilise la ville, la province et les magasins choisis à la page 2 (Rabais de la semaine).</p>
+<div class="status" id="rechStatus"></div>
+</div>
+<div class="card" id="rechResultats"></div>
+<div class="card hidden" id="rechSources"></div>
 </section>
 
 </main>
@@ -270,28 +291,28 @@ footer{text-align:center;color:var(--mut);font-size:12px;padding:18px}
 <footer>Famille Nutrition IA &middot; données conservées dans ce navigateur &middot; les prix des circulaires doivent toujours être vérifiés en magasin</footer>
 
 <div class="modal" id="modalSettings">
-  <div class="modalbox">
-    <h3>Réglages</h3>
-    <p class="mut small">Votre clé API Anthropic reste dans ce navigateur (localStorage) et n'est utilisée que pour vos propres requêtes.</p>
-    <label>Clé API Anthropic
-      <input type="password" id="apiKey" placeholder="sk-ant-..." autocomplete="off">
-    </label>
-    <label>Modèle
-      <input id="model" placeholder="claude-sonnet-5">
-    </label>
-    <label class="check"><input type="checkbox" id="optWebSearch" checked> Autoriser la recherche web (circulaires réelles de la semaine)</label>
-    <div class="lab">Mes données</div>
-    <div class="row wrap">
-      <button class="btn ghost mini" id="btnExportData">Exporter (.json)</button>
-      <button class="btn ghost mini" id="btnImportData">Importer</button>
-      <input type="file" id="fileImport" class="hidden" accept="application/json">
-      <button class="btn ghost mini danger" id="btnResetAll">Réinitialiser</button>
-    </div>
-    <div class="row end mt">
-      <button class="btn ghost" id="btnCloseSettings">Fermer</button>
-      <button class="btn" id="btnSaveSettings">Enregistrer</button>
-    </div>
-  </div>
+<div class="modalbox">
+<h3>Réglages</h3>
+<p class="mut small">Votre clé API Anthropic reste dans ce navigateur (localStorage) et n'est utilisée que pour vos propres requêtes.</p>
+<label>Clé API Anthropic
+<input type="password" id="apiKey" placeholder="sk-ant-..." autocomplete="off">
+</label>
+<label>Modèle
+<input id="model" placeholder="claude-sonnet-5">
+</label>
+<label class="check"><input type="checkbox" id="optWebSearch" checked> Autoriser la recherche web (circulaires réelles de la semaine)</label>
+<div class="lab">Mes données</div>
+<div class="row wrap">
+<button class="btn ghost mini" id="btnExportData">Exporter (.json)</button>
+<button class="btn ghost mini" id="btnImportData">Importer</button>
+<input type="file" id="fileImport" class="hidden" accept="application/json">
+<button class="btn ghost mini danger" id="btnResetAll">Réinitialiser</button>
+</div>
+<div class="row end mt">
+<button class="btn ghost" id="btnCloseSettings">Fermer</button>
+<button class="btn" id="btnSaveSettings">Enregistrer</button>
+</div>
+</div>
 </div>
 
 <script>
@@ -312,12 +333,13 @@ var VILLES = ['Montréal', 'Québec', 'Laval', 'Gatineau', 'Longueuil', 'Sherbro
 
 /* ======================= ÉTAT ======================= */
 var state = {
-  settings: { apiKey: '', model: MODEL_DEFAUT, webSearch: true },
-  membres: [],
-  rabais: { ville: '', province: 'QC', codePostal: '', semaine: '', magasins: ['IGA', 'Metro', 'Super C', 'Maxi', 'Provigo'], items: [], sources: [], note: '', generatedAt: null },
-  recettes: { params: { jours: 5, temps: 45, budget: 150, style: '', repas: ['Souper'], onlyDeals: true, restes: false }, items: [], resume: '', generatedAt: null },
-  epicerie: { magasins: ['IGA', 'Metro', 'Maxi'], items: [], note: '', generatedAt: null },
-  page: 'famille'
+settings: { apiKey: '', model: MODEL_DEFAUT, webSearch: true },
+membres: [],
+rabais: { ville: '', province: 'QC', codePostal: '', semaine: '', magasins: ['IGA', 'Metro', 'Super C', 'Maxi', 'Provigo'], items: [], sources: [], note: '', generatedAt: null },
+recettes: { params: { jours: 5, temps: 45, budget: 150, style: '', repas: ['Souper'], onlyDeals: true, restes: false }, items: [], resume: '', generatedAt: null },
+epicerie: { magasins: ['IGA', 'Metro', 'Maxi'], items: [], note: '', generatedAt: null },
+recherche: { produit: '', resultats: [], note: '', sources: [], generatedAt: null },
+page: 'famille'
 };
 
 /* ======================= OUTILS ======================= */
@@ -325,7 +347,7 @@ function $(s, r) { return (r || document).querySelector(s); }
 function $$(s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); }
 function uid() { return Math.random().toString(36).slice(2, 9); }
 function esc(s) {
-  return String(s == null ? '' : s).split('&').join('&amp;').split('<').join('&lt;').split('>').join('&gt;').split('"').join('&quot;');
+return String(s == null ? '' : s).split('&').join('&amp;').split('<').join('&lt;').split('>').join('&gt;').split('"').join('&quot;');
 }
 function num(v, d) { var n = parseFloat(v); return isFinite(n) ? n : (d || 0); }
 function r0(v) { return Math.round(num(v)); }
@@ -334,1103 +356,1323 @@ function money(v) { return (Math.round(num(v) * 100) / 100).toFixed(2) + ' $'; }
 function pad2(n) { return (n < 10 ? '0' : '') + n; }
 function todayISO() { var d = new Date(); return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate()); }
 function dateFr(iso) {
-  if (!iso) return '';
-  var p = String(iso).split('-');
-  if (p.length !== 3) return iso;
-  return p[2] + '/' + p[1] + '/' + p[0];
+if (!iso) return '';
+var p = String(iso).split('-');
+if (p.length !== 3) return iso;
+return p[2] + '/' + p[1] + '/' + p[0];
 }
 function normal(s) {
-  return String(s || '').toLowerCase().normalize('NFD').split('').filter(function (c) { return c.charCodeAt(0) < 768 || c.charCodeAt(0) > 879; }).join('').trim();
+return String(s || '').toLowerCase().normalize('NFD').split('').filter(function (c) { return c.charCodeAt(0) < 768 || c.charCodeAt(0) > 879; }).join('').trim();
 }
 function save() { try { localStorage.setItem(LS, JSON.stringify(state)); } catch (e) {} }
 function load() {
-  try {
-    var raw = localStorage.getItem(LS);
-    if (!raw) return;
-    var d = JSON.parse(raw);
-    if (d.settings) { for (var k in d.settings) state.settings[k] = d.settings[k]; }
-    if (Array.isArray(d.membres)) state.membres = d.membres;
-    if (d.rabais) { for (var a in d.rabais) state.rabais[a] = d.rabais[a]; }
-    if (d.recettes) { for (var b in d.recettes) state.recettes[b] = d.recettes[b]; }
-    if (d.epicerie) { for (var c in d.epicerie) state.epicerie[c] = d.epicerie[c]; }
-  } catch (e) {}
+try {
+var raw = localStorage.getItem(LS);
+if (!raw) return;
+var d = JSON.parse(raw);
+if (d.settings) { for (var k in d.settings) state.settings[k] = d.settings[k]; }
+if (Array.isArray(d.membres)) state.membres = d.membres;
+if (d.rabais) { for (var a in d.rabais) state.rabais[a] = d.rabais[a]; }
+if (d.recettes) { for (var b in d.recettes) state.recettes[b] = d.recettes[b]; }
+if (d.epicerie) { for (var c in d.epicerie) state.epicerie[c] = d.epicerie[c]; }
+if (d.recherche) { for (var e2 in d.recherche) state.recherche[e2] = d.recherche[e2]; }
+} catch (e) {}
 }
 function toast(msg, type) {
-  var t = $('#toast');
-  if (!t) {
-    t = document.createElement('div');
-    t.id = 'toast';
-    t.style.cssText = 'position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:#182420;border:1px solid #2a3b35;color:#e9f4f0;padding:11px 18px;border-radius:11px;z-index:99;font-size:14px;max-width:90vw;box-shadow:0 10px 30px rgba(0,0,0,.45)';
-    document.body.appendChild(t);
-  }
-  t.textContent = msg;
-  t.style.borderColor = type === 'err' ? '#ff7a7a' : (type === 'ok' ? '#25a06f' : '#2a3b35');
-  t.style.display = 'block';
-  clearTimeout(t._h);
-  t._h = setTimeout(function () { t.style.display = 'none'; }, 3600);
+var t = $('#toast');
+if (!t) {
+t = document.createElement('div');
+t.id = 'toast';
+t.style.cssText = 'position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:#182420;border:1px solid #2a3b35;color:#e9f4f0;padding:11px 18px;border-radius:11px;z-index:99;font-size:14px;max-width:90vw;box-shadow:0 10px 30px rgba(0,0,0,.45)';
+document.body.appendChild(t);
+}
+t.textContent = msg;
+t.style.borderColor = type === 'err' ? '#ff7a7a' : (type === 'ok' ? '#25a06f' : '#2a3b35');
+t.style.display = 'block';
+clearTimeout(t._h);
+t._h = setTimeout(function () { t.style.display = 'none'; }, 3600);
 }
 function setStatus(sel, msg, cls) {
-  var el = $(sel);
-  if (!el) return;
-  el.className = 'status' + (cls ? ' ' + cls : '');
-  el.innerHTML = cls === 'busy' ? '<span class="spin"></span>' + esc(msg) : esc(msg);
+var el = $(sel);
+if (!el) return;
+el.className = 'status' + (cls ? ' ' + cls : '');
+el.innerHTML = cls === 'busy' ? '<span class="spin"></span>' + esc(msg) : esc(msg);
 }
 function chipsHTML(list, actifs, attr) {
-  return list.map(function (v) {
-    var on = actifs.indexOf(v) >= 0;
-    return '<span class="chip' + (on ? ' on' : '') + '" ' + attr + '="' + esc(v) + '">' + esc(v) + '</span>';
-  }).join('');
+return list.map(function (v) {
+var on = actifs.indexOf(v) >= 0;
+return '<span class="chip' + (on ? ' on' : '') + '" ' + attr + '="' + esc(v) + '">' + esc(v) + '</span>';
+}).join('');
 }
 function optsHTML(list, val) {
-  return list.map(function (v) {
-    var value = Array.isArray(v) ? v[0] : v;
-    var label = Array.isArray(v) ? v[1] : v;
-    return '<option value="' + esc(value) + '"' + (String(value) === String(val) ? ' selected' : '') + '>' + esc(label) + '</option>';
-  }).join('');
+return list.map(function (v) {
+var value = Array.isArray(v) ? v[0] : v;
+var label = Array.isArray(v) ? v[1] : v;
+return '<option value="' + esc(value) + '"' + (String(value) === String(val) ? ' selected' : '') + '>' + esc(label) + '</option>';
+}).join('');
 }
 
 /* ======================= APPELS IA ======================= */
 function aiCall(opts) {
-  var key = (state.settings.apiKey || '').trim();
-  if (!key) return Promise.reject(new Error('Ajoutez votre clé API Anthropic dans les Réglages.'));
-  var body = {
-    apiKey: key,
-    model: state.settings.model || MODEL_DEFAUT,
-    messages: [{ role: 'user', content: opts.prompt }],
-    max_tokens: opts.maxTokens || 8000
-  };
-  if (opts.system) body.system = opts.system;
-  if (opts.webSearch && state.settings.webSearch) {
-    body.webSearch = true;
-    body.maxSearches = opts.maxSearches || 6;
-    if (opts.userLocation) body.userLocation = opts.userLocation;
-  }
-  return fetch('/api/ai', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body)
-  }).then(function (r) {
-    if (r.status === 404 || r.status === 405 || r.status === 501) return aiDirect(body);
-    return r.text().then(function (txt) {
-      var j = {};
-      try { j = JSON.parse(txt); } catch (e) { throw new Error('Réponse serveur illisible (' + r.status + ')'); }
-      if (!r.ok) throw new Error(j.error || ('Erreur ' + r.status));
-      return j;
-    });
-  }, function () { return aiDirect(body); });
+var key = (state.settings.apiKey || '').trim();
+if (!key) return Promise.reject(new Error('Ajoutez votre clé API Anthropic dans les Réglages.'));
+var body = {
+apiKey: key,
+model: state.settings.model || MODEL_DEFAUT,
+messages: [{ role: 'user', content: opts.prompt }],
+max_tokens: opts.maxTokens || 8000
+};
+if (opts.system) body.system = opts.system;
+if (opts.webSearch && state.settings.webSearch) {
+body.webSearch = true;
+body.maxSearches = opts.maxSearches || 6;
+if (opts.userLocation) body.userLocation = opts.userLocation;
+}
+return fetch('/api/ai', {
+method: 'POST',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify(body)
+}).then(function (r) {
+if (r.status === 404 || r.status === 405 || r.status === 501) return aiDirect(body);
+return r.text().then(function (txt) {
+var j = {};
+try { j = JSON.parse(txt); } catch (e) { throw new Error('Réponse serveur illisible (' + r.status + ')'); }
+if (!r.ok) throw new Error(j.error || ('Erreur ' + r.status));
+return j;
+});
+}, function () { return aiDirect(body); });
 }
 function aiDirect(body) {
-  var payload = { model: body.model, max_tokens: body.max_tokens, messages: body.messages };
-  if (body.system) payload.system = body.system;
-  if (body.webSearch) {
-    var tool = { type: 'web_search_20250305', name: 'web_search', max_uses: body.maxSearches || 6 };
-    if (body.userLocation) tool.user_location = body.userLocation;
-    payload.tools = [tool];
-  }
-  return fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': body.apiKey,
-      'anthropic-version': '2023-06-01',
-      'anthropic-dangerous-direct-browser-access': 'true'
-    },
-    body: JSON.stringify(payload)
-  }).then(function (r) {
-    return r.json().then(function (d) {
-      if (!r.ok) throw new Error((d && d.error && d.error.message) || ('Erreur ' + r.status));
-      var blocks = d.content || [];
-      var txt = blocks.filter(function (b) { return b.type === 'text'; }).map(function (b) { return b.text; }).join('\n');
-      var srcs = [];
-      blocks.forEach(function (b) {
-        if (b.type === 'web_search_tool_result' && Array.isArray(b.content)) {
-          b.content.forEach(function (it) { if (it && it.url) srcs.push({ title: it.title || it.url, url: it.url }); });
-        }
-      });
-      return { content: txt, sources: srcs };
-    });
-  });
+var payload = { model: body.model, max_tokens: body.max_tokens, messages: body.messages };
+if (body.system) payload.system = body.system;
+if (body.webSearch) {
+var tool = { type: 'web_search_20250305', name: 'web_search', max_uses: body.maxSearches || 6 };
+if (body.userLocation) tool.user_location = body.userLocation;
+payload.tools = [tool];
+}
+return fetch('https://api.anthropic.com/v1/messages', {
+method: 'POST',
+headers: {
+'Content-Type': 'application/json',
+'x-api-key': body.apiKey,
+'anthropic-version': '2023-06-01',
+'anthropic-dangerous-direct-browser-access': 'true'
+},
+body: JSON.stringify(payload)
+}).then(function (r) {
+return r.json().then(function (d) {
+if (!r.ok) throw new Error((d && d.error && d.error.message) || ('Erreur ' + r.status));
+var blocks = d.content || [];
+var txt = blocks.filter(function (b) { return b.type === 'text'; }).map(function (b) { return b.text; }).join('\n');
+var srcs = [];
+blocks.forEach(function (b) {
+if (b.type === 'web_search_tool_result' && Array.isArray(b.content)) {
+b.content.forEach(function (it) { if (it && it.url) srcs.push({ title: it.title || it.url, url: it.url }); });
+}
+});
+return { content: txt, sources: srcs };
+});
+});
 }
 function extractJSON(txt) {
-  var s = String(txt || '');
-  var i = s.indexOf('{');
-  var j = s.lastIndexOf('}');
-  if (i < 0 || j <= i) throw new Error("L'IA n'a pas retourné de données exploitables.");
-  return JSON.parse(s.slice(i, j + 1));
+var s = String(txt || '');
+var i = s.indexOf('{');
+var j = s.lastIndexOf('}');
+if (i < 0 || j <= i) throw new Error("L'IA n'a pas retourné de données exploitables.");
+return JSON.parse(s.slice(i, j + 1));
 }
 
 /* ======================= PAGE 1 : FAMILLE ======================= */
 function membreVide() {
-  return {
-    id: uid(), nom: '', age: 35, sexe: 'H', poids: 75, taille: 175,
-    activite: 'modere', objectif: 'maintien', calories: 2200,
-    prot: 30, gluc: 40, lip: 30, restrictions: [], allergies: '', aimes: '', evite: ''
-  };
+return {
+id: uid(), nom: '', age: 35, sexe: 'H', poids: 75, taille: 175,
+activite: 'modere', objectif: 'maintien', calories: 2200,
+prot: 30, gluc: 40, lip: 30, restrictions: [], allergies: '', aimes: '', evite: ''
+};
 }
 function facteurActivite(code) {
-  for (var i = 0; i < ACTIVITES.length; i++) if (ACTIVITES[i][0] === code) return ACTIVITES[i][2];
-  return 1.55;
+for (var i = 0; i < ACTIVITES.length; i++) if (ACTIVITES[i][0] === code) return ACTIVITES[i][2];
+return 1.55;
 }
 function facteurObjectif(code) {
-  for (var i = 0; i < OBJECTIFS.length; i++) if (OBJECTIFS[i][0] === code) return OBJECTIFS[i][2];
-  return 0;
+for (var i = 0; i < OBJECTIFS.length; i++) if (OBJECTIFS[i][0] === code) return OBJECTIFS[i][2];
+return 0;
 }
 function caloriesEstimees(m) {
-  var p = num(m.poids, 70), t = num(m.taille, 170), a = num(m.age, 30);
-  var homme = m.sexe !== 'F';
-  var bmr;
-  if (a < 3) bmr = homme ? (59.5 * p - 30.4) : (58.3 * p - 31.1);
-  else if (a < 10) bmr = homme ? (22.7 * p + 495) : (22.5 * p + 499);
-  else if (a < 18) bmr = homme ? (17.5 * p + 651) : (12.2 * p + 746);
-  else bmr = 10 * p + 6.25 * t - 5 * a + (homme ? 5 : -161);
-  var kcal = bmr * facteurActivite(m.activite);
-  kcal = kcal * (1 + facteurObjectif(m.objectif));
-  return Math.round(kcal / 10) * 10;
+var p = num(m.poids, 70), t = num(m.taille, 170), a = num(m.age, 30);
+var homme = m.sexe !== 'F';
+var bmr;
+if (a < 3) bmr = homme ? (59.5 * p - 30.4) : (58.3 * p - 31.1);
+else if (a < 10) bmr = homme ? (22.7 * p + 495) : (22.5 * p + 499);
+else if (a < 18) bmr = homme ? (17.5 * p + 651) : (12.2 * p + 746);
+else bmr = 10 * p + 6.25 * t - 5 * a + (homme ? 5 : -161);
+var kcal = bmr * facteurActivite(m.activite);
+kcal = kcal * (1 + facteurObjectif(m.objectif));
+return Math.round(kcal / 10) * 10;
 }
 function grammes(m) {
-  var c = num(m.calories);
-  return {
-    prot: Math.round(c * num(m.prot) / 100 / 4),
-    gluc: Math.round(c * num(m.gluc) / 100 / 4),
-    lip: Math.round(c * num(m.lip) / 100 / 9)
-  };
+var c = num(m.calories);
+return {
+prot: Math.round(c * num(m.prot) / 100 / 4),
+gluc: Math.round(c * num(m.gluc) / 100 / 4),
+lip: Math.round(c * num(m.lip) / 100 / 9)
+};
 }
 function macrosHTML(m, i) {
-  var g = grammes(m);
-  var somme = num(m.prot) + num(m.gluc) + num(m.lip);
-  var ok = Math.abs(somme - 100) < 0.5;
-  return '<div class="bar">' +
-    '<i class="p" style="width:' + num(m.prot) + '%"></i>' +
-    '<i class="g" style="width:' + num(m.gluc) + '%"></i>' +
-    '<i class="l" style="width:' + num(m.lip) + '%"></i>' +
-    '</div>' +
-    '<div class="leg">' +
-    '<span><span class="dot" style="background:#5b9dff"></span>Protéines <em>' + g.prot + ' g</em></span>' +
-    '<span><span class="dot" style="background:#3ddc97"></span>Glucides <em>' + g.gluc + ' g</em></span>' +
-    '<span><span class="dot" style="background:#ffc061"></span>Lipides <em>' + g.lip + ' g</em></span>' +
-    (ok ? '' : '<span class="badge warn">Total ' + r1(somme) + ' % (doit faire 100 %)</span>') +
-    '</div>';
+var g = grammes(m);
+var somme = num(m.prot) + num(m.gluc) + num(m.lip);
+var ok = Math.abs(somme - 100) < 0.5;
+return '<div class="bar">' +
+'<i class="p" style="width:' + num(m.prot) + '%"></i>' +
+'<i class="g" style="width:' + num(m.gluc) + '%"></i>' +
+'<i class="l" style="width:' + num(m.lip) + '%"></i>' +
+'</div>' +
+'<div class="leg">' +
+'<span><span class="dot" style="background:#5b9dff"></span>Protéines <em>' + g.prot + ' g</em></span>' +
+'<span><span class="dot" style="background:#3ddc97"></span>Glucides <em>' + g.gluc + ' g</em></span>' +
+'<span><span class="dot" style="background:#ffc061"></span>Lipides <em>' + g.lip + ' g</em></span>' +
+(ok ? '' : '<span class="badge warn">Total ' + r1(somme) + ' % (doit faire 100 %)</span>') +
+'</div>';
 }
 function membreCardHTML(m, i) {
-  var somme = num(m.prot) + num(m.gluc) + num(m.lip);
-  var alerte = Math.abs(somme - 100) >= 0.5;
-  return '<div class="mcard' + (alerte ? ' warnbox' : '') + '">' +
-    '<div class="mtop">' +
-      '<input data-i="' + i + '" data-f="nom" value="' + esc(m.nom) + '" placeholder="Prénom" style="font-weight:700;font-size:15px;margin:0">' +
-      '<button class="btn ghost mini danger" data-act="del" data-i="' + i + '">Retirer</button>' +
-    '</div>' +
-    '<div class="formgrid">' +
-      '<label>Âge<input type="number" min="1" max="110" data-i="' + i + '" data-f="age" value="' + num(m.age) + '"></label>' +
-      '<label>Sexe<select data-i="' + i + '" data-f="sexe">' + optsHTML([['H', 'Homme / garçon'], ['F', 'Femme / fille']], m.sexe) + '</select></label>' +
-      '<label>Poids (kg)<input type="number" min="5" max="250" data-i="' + i + '" data-f="poids" value="' + num(m.poids) + '"></label>' +
-      '<label>Taille (cm)<input type="number" min="50" max="230" data-i="' + i + '" data-f="taille" value="' + num(m.taille) + '"></label>' +
-      '<label>Niveau d\'activité<select data-i="' + i + '" data-f="activite">' + optsHTML(ACTIVITES, m.activite) + '</select></label>' +
-      '<label>Objectif<select data-i="' + i + '" data-f="objectif">' + optsHTML(OBJECTIFS, m.objectif) + '</select></label>' +
-    '</div>' +
-    '<div class="row wrap mt">' +
-      '<label style="flex:1 1 120px;margin:0">Calories par jour<input type="number" min="600" max="6000" step="10" data-i="' + i + '" data-f="calories" value="' + num(m.calories) + '"></label>' +
-      '<button class="btn ghost mini" data-act="calc" data-i="' + i + '" title="Estimer selon Mifflin-St Jeor">Calculer</button>' +
-    '</div>' +
-    '<div class="lab">Répartition des macros (%)</div>' +
-    '<div class="formgrid">' +
-      '<label>Protéines %<input type="number" min="0" max="100" data-i="' + i + '" data-f="prot" value="' + num(m.prot) + '"></label>' +
-      '<label>Glucides %<input type="number" min="0" max="100" data-i="' + i + '" data-f="gluc" value="' + num(m.gluc) + '"></label>' +
-      '<label>Lipides %<input type="number" min="0" max="100" data-i="' + i + '" data-f="lip" value="' + num(m.lip) + '"></label>' +
-    '</div>' +
-    '<div id="mac-' + i + '">' + macrosHTML(m, i) + '</div>' +
-    '<div class="lab">Restrictions alimentaires</div>' +
-    '<div class="chips" data-restr="' + i + '">' + chipsHTML(RESTRICTIONS, m.restrictions || [], 'data-val') + '</div>' +
-    '<label class="mt">Allergies / intolérances précises<input data-i="' + i + '" data-f="allergies" value="' + esc(m.allergies) + '" placeholder="Ex. : arachides, kiwi"></label>' +
-    '<label class="mt">Aliments aimés<input data-i="' + i + '" data-f="aimes" value="' + esc(m.aimes) + '" placeholder="Ex. : saumon, patates douces"></label>' +
-    '<label class="mt">Aliments à éviter<input data-i="' + i + '" data-f="evite" value="' + esc(m.evite) + '" placeholder="Ex. : champignons"></label>' +
-    '</div>';
+var somme = num(m.prot) + num(m.gluc) + num(m.lip);
+var alerte = Math.abs(somme - 100) >= 0.5;
+return '<div class="mcard' + (alerte ? ' warnbox' : '') + '">' +
+'<div class="mtop">' +
+'<input data-i="' + i + '" data-f="nom" value="' + esc(m.nom) + '" placeholder="Prénom" style="font-weight:700;font-size:15px;margin:0">' +
+'<button class="btn ghost mini danger" data-act="del" data-i="' + i + '">Retirer</button>' +
+'</div>' +
+'<div class="formgrid">' +
+'<label>Âge<input type="number" min="1" max="110" data-i="' + i + '" data-f="age" value="' + num(m.age) + '"></label>' +
+'<label>Sexe<select data-i="' + i + '" data-f="sexe">' + optsHTML([['H', 'Homme / garçon'], ['F', 'Femme / fille']], m.sexe) + '</select></label>' +
+'<label>Poids (kg)<input type="number" min="5" max="250" data-i="' + i + '" data-f="poids" value="' + num(m.poids) + '"></label>' +
+'<label>Taille (cm)<input type="number" min="50" max="230" data-i="' + i + '" data-f="taille" value="' + num(m.taille) + '"></label>' +
+'<label>Niveau d\'activité<select data-i="' + i + '" data-f="activite">' + optsHTML(ACTIVITES, m.activite) + '</select></label>' +
+'<label>Objectif<select data-i="' + i + '" data-f="objectif">' + optsHTML(OBJECTIFS, m.objectif) + '</select></label>' +
+'</div>' +
+'<div class="row wrap mt">' +
+'<label style="flex:1 1 120px;margin:0">Calories par jour<input type="number" min="600" max="6000" step="10" data-i="' + i + '" data-f="calories" value="' + num(m.calories) + '"></label>' +
+'<button class="btn ghost mini" data-act="calc" data-i="' + i + '" title="Estimer selon Mifflin-St Jeor">Calculer</button>' +
+'</div>' +
+'<div class="lab">Répartition des macros (%)</div>' +
+'<div class="formgrid">' +
+'<label>Protéines %<input type="number" min="0" max="100" data-i="' + i + '" data-f="prot" value="' + num(m.prot) + '"></label>' +
+'<label>Glucides %<input type="number" min="0" max="100" data-i="' + i + '" data-f="gluc" value="' + num(m.gluc) + '"></label>' +
+'<label>Lipides %<input type="number" min="0" max="100" data-i="' + i + '" data-f="lip" value="' + num(m.lip) + '"></label>' +
+'</div>' +
+'<div id="mac-' + i + '">' + macrosHTML(m, i) + '</div>' +
+'<div class="lab">Restrictions alimentaires</div>' +
+'<div class="chips" data-restr="' + i + '">' + chipsHTML(RESTRICTIONS, m.restrictions || [], 'data-val') + '</div>' +
+'<label class="mt">Allergies / intolérances précises<input data-i="' + i + '" data-f="allergies" value="' + esc(m.allergies) + '" placeholder="Ex. : arachides, kiwi"></label>' +
+'<label class="mt">Aliments aimés<input data-i="' + i + '" data-f="aimes" value="' + esc(m.aimes) + '" placeholder="Ex. : saumon, patates douces"></label>' +
+'<label class="mt">Aliments à éviter<input data-i="' + i + '" data-f="evite" value="' + esc(m.evite) + '" placeholder="Ex. : champignons"></label>' +
+'</div>';
 }
 function renderFamille() {
-  var box = $('#membresList');
-  if (!state.membres.length) {
-    box.innerHTML = '<div class="card"><p class="mut">Aucune personne pour le moment. Cliquez sur <b>+ Ajouter une personne</b> pour créer la première fiche.</p></div>';
-  } else {
-    box.innerHTML = state.membres.map(membreCardHTML).join('');
-  }
-  renderFamilleResume();
+var box = $('#membresList');
+if (!state.membres.length) {
+box.innerHTML = '<div class="card"><p class="mut">Aucune personne pour le moment. Cliquez sur <b>+ Ajouter une personne</b> pour créer la première fiche.</p></div>';
+} else {
+box.innerHTML = state.membres.map(membreCardHTML).join('');
+}
+renderFamilleResume();
 }
 function renderFamilleResume() {
-  var box = $('#familleResume');
-  var kcal = 0, p = 0, g = 0, l = 0, restr = [];
-  state.membres.forEach(function (m) {
-    kcal += num(m.calories);
-    var gr = grammes(m);
-    p += gr.prot; g += gr.gluc; l += gr.lip;
-    (m.restrictions || []).forEach(function (r) { if (restr.indexOf(r) < 0) restr.push(r); });
-    if (m.allergies) String(m.allergies).split(',').forEach(function (a) {
-      a = a.trim();
-      if (a && restr.indexOf('Allergie: ' + a) < 0) restr.push('Allergie: ' + a);
-    });
-  });
-  box.innerHTML = '<div class="kpis">' +
-    '<div class="kpi"><span>Personnes</span><b>' + state.membres.length + '</b></div>' +
-    '<div class="kpi"><span>Calories / jour</span><b>' + r0(kcal) + '</b></div>' +
-    '<div class="kpi"><span>Protéines / jour</span><b>' + r0(p) + ' g</b></div>' +
-    '<div class="kpi"><span>Glucides / jour</span><b>' + r0(g) + ' g</b></div>' +
-    '<div class="kpi"><span>Lipides / jour</span><b>' + r0(l) + ' g</b></div>' +
-    '<div class="kpi"><span>Calories / semaine</span><b>' + r0(kcal * 7) + '</b></div>' +
-    '</div>' +
-    (restr.length ? '<div class="lab">Contraintes de la famille</div><div class="chips">' + restr.map(function (r) { return '<span class="badge warn">' + esc(r) + '</span>'; }).join('') + '</div>' : '');
+var box = $('#familleResume');
+var kcal = 0, p = 0, g = 0, l = 0, restr = [];
+state.membres.forEach(function (m) {
+kcal += num(m.calories);
+var gr = grammes(m);
+p += gr.prot; g += gr.gluc; l += gr.lip;
+(m.restrictions || []).forEach(function (r) { if (restr.indexOf(r) < 0) restr.push(r); });
+if (m.allergies) String(m.allergies).split(',').forEach(function (a) {
+a = a.trim();
+if (a && restr.indexOf('Allergie: ' + a) < 0) restr.push('Allergie: ' + a);
+});
+});
+box.innerHTML = '<div class="kpis">' +
+'<div class="kpi"><span>Personnes</span><b>' + state.membres.length + '</b></div>' +
+'<div class="kpi"><span>Calories / jour</span><b>' + r0(kcal) + '</b></div>' +
+'<div class="kpi"><span>Protéines / jour</span><b>' + r0(p) + ' g</b></div>' +
+'<div class="kpi"><span>Glucides / jour</span><b>' + r0(g) + ' g</b></div>' +
+'<div class="kpi"><span>Lipides / jour</span><b>' + r0(l) + ' g</b></div>' +
+'<div class="kpi"><span>Calories / semaine</span><b>' + r0(kcal * 7) + '</b></div>' +
+'</div>' +
+(restr.length ? '<div class="lab">Contraintes de la famille</div><div class="chips">' + restr.map(function (r) { return '<span class="badge warn">' + esc(r) + '</span>'; }).join('') + '</div>' : '');
 }
 function bindFamille() {
-  $('#btnAddMembre').addEventListener('click', function () {
-    state.membres.push(membreVide());
-    save(); renderFamille();
-  });
-  var box = $('#membresList');
-  box.addEventListener('input', function (e) {
-    var el = e.target;
-    var i = el.getAttribute('data-i'), f = el.getAttribute('data-f');
-    if (i === null || !f) return;
-    var m = state.membres[+i];
-    if (!m) return;
-    m[f] = (el.type === 'number') ? num(el.value) : el.value;
-    var zone = $('#mac-' + i);
-    if (zone) zone.innerHTML = macrosHTML(m, +i);
-    renderFamilleResume();
-    save();
-  });
-  box.addEventListener('change', function (e) {
-    var el = e.target;
-    if (el.tagName !== 'SELECT') return;
-    var i = el.getAttribute('data-i'), f = el.getAttribute('data-f');
-    if (i === null || !f) return;
-    state.membres[+i][f] = el.value;
-    save();
-  });
-  box.addEventListener('click', function (e) {
-    var chip = e.target.closest ? e.target.closest('.chip') : null;
-    if (chip) {
-      var idx = +chip.parentNode.getAttribute('data-restr');
-      var val = chip.getAttribute('data-val');
-      var m = state.membres[idx];
-      if (!m) return;
-      m.restrictions = m.restrictions || [];
-      var k = m.restrictions.indexOf(val);
-      if (k >= 0) m.restrictions.splice(k, 1); else m.restrictions.push(val);
-      chip.classList.toggle('on');
-      renderFamilleResume(); save();
-      return;
-    }
-    var btn = e.target.closest ? e.target.closest('button[data-act]') : null;
-    if (!btn) return;
-    var i = +btn.getAttribute('data-i');
-    var act = btn.getAttribute('data-act');
-    if (act === 'del') {
-      if (!confirm('Retirer cette personne de la famille ?')) return;
-      state.membres.splice(i, 1); save(); renderFamille();
-    } else if (act === 'calc') {
-      var mm = state.membres[i];
-      mm.calories = caloriesEstimees(mm);
-      save(); renderFamille();
-      toast('Estimation : ' + mm.calories + ' kcal/jour', 'ok');
-    }
-  });
+$('#btnAddMembre').addEventListener('click', function () {
+state.membres.push(membreVide());
+save(); renderFamille();
+});
+var box = $('#membresList');
+box.addEventListener('input', function (e) {
+var el = e.target;
+var i = el.getAttribute('data-i'), f = el.getAttribute('data-f');
+if (i === null || !f) return;
+var m = state.membres[+i];
+if (!m) return;
+m[f] = (el.type === 'number') ? num(el.value) : el.value;
+var zone = $('#mac-' + i);
+if (zone) zone.innerHTML = macrosHTML(m, +i);
+renderFamilleResume();
+save();
+});
+box.addEventListener('change', function (e) {
+var el = e.target;
+if (el.tagName !== 'SELECT') return;
+var i = el.getAttribute('data-i'), f = el.getAttribute('data-f');
+if (i === null || !f) return;
+state.membres[+i][f] = el.value;
+save();
+});
+box.addEventListener('click', function (e) {
+var chip = e.target.closest ? e.target.closest('.chip') : null;
+if (chip) {
+var idx = +chip.parentNode.getAttribute('data-restr');
+var val = chip.getAttribute('data-val');
+var m = state.membres[idx];
+if (!m) return;
+m.restrictions = m.restrictions || [];
+var k = m.restrictions.indexOf(val);
+if (k >= 0) m.restrictions.splice(k, 1); else m.restrictions.push(val);
+chip.classList.toggle('on');
+renderFamilleResume(); save();
+return;
+}
+var btn = e.target.closest ? e.target.closest('button[data-act]') : null;
+if (!btn) return;
+var i = +btn.getAttribute('data-i');
+var act = btn.getAttribute('data-act');
+if (act === 'del') {
+if (!confirm('Retirer cette personne de la famille ?')) return;
+state.membres.splice(i, 1); save(); renderFamille();
+} else if (act === 'calc') {
+var mm = state.membres[i];
+mm.calories = caloriesEstimees(mm);
+save(); renderFamille();
+toast('Estimation : ' + mm.calories + ' kcal/jour', 'ok');
+}
+});
 }
 
 /* ======================= PAGE 2 : RABAIS ======================= */
 function rabaisVide() {
-  return { id: uid(), garder: true, produit: '', categorie: 'Autre', magasin: '', prix: 0, unite: '', prixRegulier: 0, valide: '', note: '', incertain: false };
+return { id: uid(), garder: true, produit: '', categorie: 'Autre', magasin: '', prix: 0, unite: '', prixRegulier: 0, valide: '', note: '', incertain: false };
 }
 function economiePct(it) {
-  var pr = num(it.prixRegulier), p = num(it.prix);
-  if (pr > 0 && p > 0 && pr > p) return Math.round((1 - p / pr) * 100);
-  return 0;
+var pr = num(it.prixRegulier), p = num(it.prix);
+if (pr > 0 && p > 0 && pr > p) return Math.round((1 - p / pr) * 100);
+return 0;
 }
 function renderRabais() {
-  var items = state.rabais.items || [];
-  var gardes = items.filter(function (i) { return i.garder; });
-  var moy = 0, n = 0;
-  gardes.forEach(function (i) { var e = economiePct(i); if (e > 0) { moy += e; n++; } });
-  $('#rabaisKpis').innerHTML = '<div class="kpis">' +
-    '<div class="kpi"><span>Aubaines trouvées</span><b>' + items.length + '</b></div>' +
-    '<div class="kpi"><span>Retenues</span><b>' + gardes.length + '</b></div>' +
-    '<div class="kpi"><span>Économie moyenne</span><b>' + (n ? Math.round(moy / n) + ' %' : '-') + '</b></div>' +
-    '<div class="kpi"><span>Ville</span><b style="font-size:15px">' + esc(state.rabais.ville || '-') + '</b></div>' +
-    '<div class="kpi"><span>Mise à jour</span><b style="font-size:15px">' + esc(state.rabais.generatedAt ? dateFr(state.rabais.generatedAt.slice(0, 10)) : '-') + '</b></div>' +
-    '</div>' + (state.rabais.note ? '<p class="mut small mt">' + esc(state.rabais.note) + '</p>' : '');
+var items = state.rabais.items || [];
+var gardes = items.filter(function (i) { return i.garder; });
+var moy = 0, n = 0;
+gardes.forEach(function (i) { var e = economiePct(i); if (e > 0) { moy += e; n++; } });
+$('#rabaisKpis').innerHTML = '<div class="kpis">' +
+'<div class="kpi"><span>Aubaines trouvées</span><b>' + items.length + '</b></div>' +
+'<div class="kpi"><span>Retenues</span><b>' + gardes.length + '</b></div>' +
+'<div class="kpi"><span>Économie moyenne</span><b>' + (n ? Math.round(moy / n) + ' %' : '-') + '</b></div>' +
+'<div class="kpi"><span>Ville</span><b style="font-size:15px">' + esc(state.rabais.ville || '-') + '</b></div>' +
+'<div class="kpi"><span>Mise à jour</span><b style="font-size:15px">' + esc(state.rabais.generatedAt ? dateFr(state.rabais.generatedAt.slice(0, 10)) : '-') + '</b></div>' +
+'</div>' + (state.rabais.note ? '<p class="mut small mt">' + esc(state.rabais.note) + '</p>' : '');
 
-  if (!items.length) {
-    $('#rabaisTable').innerHTML = '<p class="mut">Aucun rabais pour le moment. Choisissez votre ville et vos magasins, puis cliquez sur <b>Générer les rabais avec l\'IA</b>. Vous pouvez aussi coller le texte d\'une circulaire ou ajouter des items à la main.</p>';
-  } else {
-    var rows = items.map(function (it, i) {
-      var e = economiePct(it);
-      return '<tr>' +
-        '<td><input type="checkbox" data-ri="' + i + '" data-f="garder"' + (it.garder ? ' checked' : '') + '></td>' +
-        '<td><input data-ri="' + i + '" data-f="produit" value="' + esc(it.produit) + '" style="min-width:160px"></td>' +
-        '<td><select data-ri="' + i + '" data-f="categorie">' + optsHTML(CATEGORIES, it.categorie) + '</select></td>' +
-        '<td><input list="magListe" data-ri="' + i + '" data-f="magasin" value="' + esc(it.magasin) + '" style="min-width:110px"></td>' +
-        '<td><input type="number" step="0.01" data-ri="' + i + '" data-f="prix" value="' + num(it.prix) + '" style="width:82px"></td>' +
-        '<td><input data-ri="' + i + '" data-f="unite" value="' + esc(it.unite) + '" style="width:90px"></td>' +
-        '<td><input type="number" step="0.01" data-ri="' + i + '" data-f="prixRegulier" value="' + num(it.prixRegulier) + '" style="width:82px"></td>' +
-        '<td>' + (e > 0 ? '<span class="badge deal">-' + e + ' %</span>' : '<span class="mut">-</span>') + (it.incertain ? ' <span class="badge warn" title="Prix à vérifier">?</span>' : '') + '</td>' +
-        '<td><input data-ri="' + i + '" data-f="note" value="' + esc(it.note) + '" style="min-width:120px"></td>' +
-        '<td><button class="btn ghost mini danger" data-delr="' + i + '">x</button></td>' +
-        '</tr>';
-    }).join('');
-    $('#rabaisTable').innerHTML = '<table><thead><tr>' +
-      '<th>Garder</th><th>Produit</th><th>Catégorie</th><th>Magasin</th><th>Prix</th><th>Format</th><th>Régulier</th><th>Rabais</th><th>Note</th><th></th>' +
-      '</tr></thead><tbody>' + rows + '</tbody></table>';
-  }
+if (!items.length) {
+$('#rabaisTable').innerHTML = '<p class="mut">Aucun rabais pour le moment. Choisissez votre ville et vos magasins, puis cliquez sur <b>Générer les rabais avec l\'IA</b>. Vous pouvez aussi coller le texte d\'une circulaire ou ajouter des items à la main.</p>';
+} else {
+var rows = items.map(function (it, i) {
+var e = economiePct(it);
+return '<tr>' +
+'<td><input type="checkbox" data-ri="' + i + '" data-f="garder"' + (it.garder ? ' checked' : '') + '></td>' +
+'<td><input data-ri="' + i + '" data-f="produit" value="' + esc(it.produit) + '" style="min-width:160px"></td>' +
+'<td><select data-ri="' + i + '" data-f="categorie">' + optsHTML(CATEGORIES, it.categorie) + '</select></td>' +
+'<td><input list="magListe" data-ri="' + i + '" data-f="magasin" value="' + esc(it.magasin) + '" style="min-width:110px"></td>' +
+'<td><input type="number" step="0.01" data-ri="' + i + '" data-f="prix" value="' + num(it.prix) + '" style="width:82px"></td>' +
+'<td><input data-ri="' + i + '" data-f="unite" value="' + esc(it.unite) + '" style="width:90px"></td>' +
+'<td><input type="number" step="0.01" data-ri="' + i + '" data-f="prixRegulier" value="' + num(it.prixRegulier) + '" style="width:82px"></td>' +
+'<td>' + (e > 0 ? '<span class="badge deal">-' + e + ' %</span>' : '<span class="mut">-</span>') + (it.incertain ? ' <span class="badge warn" title="Prix à vérifier">?</span>' : '') + '</td>' +
+'<td><input data-ri="' + i + '" data-f="note" value="' + esc(it.note) + '" style="min-width:120px"></td>' +
+'<td><button class="btn ghost mini danger" data-delr="' + i + '">x</button></td>' +
+'</tr>';
+}).join('');
+$('#rabaisTable').innerHTML = '<table><thead><tr>' +
+'<th>Garder</th><th>Produit</th><th>Catégorie</th><th>Magasin</th><th>Prix</th><th>Format</th><th>Régulier</th><th>Rabais</th><th>Note</th><th></th>' +
+'</tr></thead><tbody>' + rows + '</tbody></table>';
+}
 
-  var srcBox = $('#rabaisSources');
-  var srcs = state.rabais.sources || [];
-  if (srcs.length) {
-    srcBox.classList.remove('hidden');
-    srcBox.innerHTML = '<div class="lab">Sources consultées par l\'IA</div><ul class="small mut">' +
-      srcs.map(function (s) { return '<li><a href="' + esc(s.url) + '" target="_blank" rel="noopener">' + esc(s.title) + '</a></li>'; }).join('') + '</ul>';
-  } else {
-    srcBox.classList.add('hidden');
-    srcBox.innerHTML = '';
-  }
+var srcBox = $('#rabaisSources');
+var srcs = state.rabais.sources || [];
+if (srcs.length) {
+srcBox.classList.remove('hidden');
+srcBox.innerHTML = '<div class="lab">Sources consultées par l\'IA</div><ul class="small mut">' +
+srcs.map(function (s) { return '<li><a href="' + esc(s.url) + '" target="_blank" rel="noopener">' + esc(s.title) + '</a></li>'; }).join('') + '</ul>';
+} else {
+srcBox.classList.add('hidden');
+srcBox.innerHTML = '';
+}
 }
 function bindRabais() {
-  var dl = document.createElement('datalist');
-  dl.id = 'magListe';
-  dl.innerHTML = MAGASINS.map(function (m) { return '<option value="' + esc(m) + '"></option>'; }).join('');
-  document.body.appendChild(dl);
-  $('#villes').innerHTML = VILLES.map(function (v) { return '<option value="' + esc(v) + '"></option>'; }).join('');
+var dl = document.createElement('datalist');
+dl.id = 'magListe';
+dl.innerHTML = MAGASINS.map(function (m) { return '<option value="' + esc(m) + '"></option>'; }).join('');
+document.body.appendChild(dl);
+$('#villes').innerHTML = VILLES.map(function (v) { return '<option value="' + esc(v) + '"></option>'; }).join('');
 
-  $('#ville').value = state.rabais.ville || '';
-  $('#province').value = state.rabais.province || 'QC';
-  $('#codePostal').value = state.rabais.codePostal || '';
-  $('#semaine').value = state.rabais.semaine || todayISO();
-  state.rabais.semaine = $('#semaine').value;
+$('#ville').value = state.rabais.ville || '';
+$('#province').value = state.rabais.province || 'QC';
+$('#codePostal').value = state.rabais.codePostal || '';
+$('#semaine').value = state.rabais.semaine || todayISO();
+state.rabais.semaine = $('#semaine').value;
 
-  ['ville', 'province', 'codePostal', 'semaine'].forEach(function (f) {
-    $('#' + f).addEventListener('change', function () {
-      state.rabais[f] = this.value;
-      save(); renderRabais();
-    });
-  });
+['ville', 'province', 'codePostal', 'semaine'].forEach(function (f) {
+$('#' + f).addEventListener('change', function () {
+state.rabais[f] = this.value;
+save(); renderRabais();
+});
+});
 
-  $('#magasinsRabais').innerHTML = chipsHTML(MAGASINS, state.rabais.magasins || [], 'data-val');
-  $('#magasinsRabais').addEventListener('click', function (e) {
-    var chip = e.target.closest('.chip');
-    if (!chip) return;
-    var v = chip.getAttribute('data-val');
-    var k = state.rabais.magasins.indexOf(v);
-    if (k >= 0) state.rabais.magasins.splice(k, 1); else state.rabais.magasins.push(v);
-    chip.classList.toggle('on');
-    save();
-  });
+$('#magasinsRabais').innerHTML = chipsHTML(MAGASINS, state.rabais.magasins || [], 'data-val');
+$('#magasinsRabais').addEventListener('click', function (e) {
+var chip = e.target.closest('.chip');
+if (!chip) return;
+var v = chip.getAttribute('data-val');
+var k = state.rabais.magasins.indexOf(v);
+if (k >= 0) state.rabais.magasins.splice(k, 1); else state.rabais.magasins.push(v);
+chip.classList.toggle('on');
+save();
+});
 
-  var tb = $('#rabaisTable');
-  tb.addEventListener('input', function (e) {
-    var el = e.target, i = el.getAttribute('data-ri'), f = el.getAttribute('data-f');
-    if (i === null || !f) return;
-    var it = state.rabais.items[+i];
-    if (!it) return;
-    it[f] = el.type === 'checkbox' ? el.checked : (el.type === 'number' ? num(el.value) : el.value);
-    if (f === 'prix' || f === 'prixRegulier' || f === 'garder') renderRabais();
-    save();
-  });
-  tb.addEventListener('change', function (e) {
-    var el = e.target, i = el.getAttribute('data-ri'), f = el.getAttribute('data-f');
-    if (i === null || !f || el.tagName !== 'SELECT') return;
-    state.rabais.items[+i][f] = el.value;
-    save();
-  });
-  tb.addEventListener('click', function (e) {
-    var b = e.target.closest('button[data-delr]');
-    if (!b) return;
-    state.rabais.items.splice(+b.getAttribute('data-delr'), 1);
-    save(); renderRabais();
-  });
+var tb = $('#rabaisTable');
+tb.addEventListener('input', function (e) {
+var el = e.target, i = el.getAttribute('data-ri'), f = el.getAttribute('data-f');
+if (i === null || !f) return;
+var it = state.rabais.items[+i];
+if (!it) return;
+it[f] = el.type === 'checkbox' ? el.checked : (el.type === 'number' ? num(el.value) : el.value);
+if (f === 'prix' || f === 'prixRegulier' || f === 'garder') renderRabais();
+save();
+});
+tb.addEventListener('change', function (e) {
+var el = e.target, i = el.getAttribute('data-ri'), f = el.getAttribute('data-f');
+if (i === null || !f || el.tagName !== 'SELECT') return;
+state.rabais.items[+i][f] = el.value;
+save();
+});
+tb.addEventListener('click', function (e) {
+var b = e.target.closest('button[data-delr]');
+if (!b) return;
+state.rabais.items.splice(+b.getAttribute('data-delr'), 1);
+save(); renderRabais();
+});
 
-  $('#btnAddRabais').addEventListener('click', function () {
-    state.rabais.items.unshift(rabaisVide());
-    save(); renderRabais();
-  });
-  $('#btnClearRabais').addEventListener('click', function () {
-    if (!state.rabais.items.length || !confirm('Vider la liste des rabais ?')) return;
-    state.rabais.items = []; state.rabais.sources = []; state.rabais.note = '';
-    save(); renderRabais();
-  });
-  $('#btnPasteCirc').addEventListener('click', function () {
-    $('#circBox').classList.toggle('hidden');
-  });
-  $('#btnParseCirc').addEventListener('click', parseCirculaire);
-  $('#btnGenRabais').addEventListener('click', genRabais);
+$('#btnAddRabais').addEventListener('click', function () {
+state.rabais.items.unshift(rabaisVide());
+save(); renderRabais();
+});
+$('#btnClearRabais').addEventListener('click', function () {
+if (!state.rabais.items.length || !confirm('Vider la liste des rabais ?')) return;
+state.rabais.items = []; state.rabais.sources = []; state.rabais.note = '';
+save(); renderRabais();
+});
+$('#btnPasteCirc').addEventListener('click', function () {
+$('#circBox').classList.toggle('hidden');
+});
+$('#btnParseCirc').addEventListener('click', parseCirculaire);
+$('#btnGenRabais').addEventListener('click', genRabais);
 }
 function promptRabais(texteCirculaire) {
-  var r = state.rabais;
-  var L = [];
-  L.push('Ville: ' + (r.ville || 'non precisee'));
-  L.push('Province ou region: ' + (r.province || 'QC'));
-  if (r.codePostal) L.push('Code postal: ' + r.codePostal);
-  L.push('Semaine du: ' + dateFr(r.semaine));
-  L.push('Magasins a couvrir: ' + (r.magasins || []).join(', '));
-  L.push('');
-  if (texteCirculaire) {
-    L.push('Voici le texte brut d une circulaire. Extrais-en les rabais alimentaires interessants.');
-    L.push('--- DEBUT DU TEXTE ---');
-    L.push(texteCirculaire.slice(0, 12000));
-    L.push('--- FIN DU TEXTE ---');
-  } else {
-    L.push('Tache: trouve les meilleurs rabais alimentaires de la circulaire de la semaine en cours pour ces magasins dans cette ville.');
-    L.push('Utilise la recherche web pour consulter les circulaires en ligne des detaillants et valider les prix quand c est possible.');
-    L.push('Donne entre 18 et 32 items, les plus economiques et les plus utiles pour cuisiner des repas familiaux complets.');
-  }
-  L.push('');
-  L.push('Priorise: proteines (viandes, volailles, poissons, oeufs, legumineuses, tofu), fruits et legumes, produits laitiers, feculents de base.');
-  L.push('Prix en dollars canadiens. Precise le format (ex: /lb, /kg, 500 g, paquet de 12).');
-  L.push('Si un prix est estime ou incertain, mets incertain a true.');
-  L.push('Categories permises: ' + CATEGORIES.join(' | '));
-  L.push('');
-  L.push('Reponds UNIQUEMENT avec ce JSON:');
-  L.push('{');
-  L.push('  "semaine": "texte court",');
-  L.push('  "note": "avertissement court sur la fiabilite des prix",');
-  L.push('  "rabais": [');
-  L.push('    {"produit": "", "categorie": "", "magasin": "", "prix": 0, "unite": "", "prixRegulier": 0, "valide": "", "note": "", "incertain": false}');
-  L.push('  ]');
-  L.push('}');
-  return L.join('\n');
+var r = state.rabais;
+var L = [];
+L.push('Ville: ' + (r.ville || 'non precisee'));
+L.push('Province ou region: ' + (r.province || 'QC'));
+if (r.codePostal) L.push('Code postal: ' + r.codePostal);
+L.push('Semaine du: ' + dateFr(r.semaine));
+L.push('Magasins a couvrir: ' + (r.magasins || []).join(', '));
+L.push('');
+if (texteCirculaire) {
+L.push('Voici le texte brut d une circulaire. Extrais-en les rabais alimentaires interessants.');
+L.push('--- DEBUT DU TEXTE ---');
+L.push(texteCirculaire.slice(0, 12000));
+L.push('--- FIN DU TEXTE ---');
+} else {
+L.push('Tache: trouve les meilleurs rabais alimentaires de la circulaire de la semaine en cours pour ces magasins dans cette ville.');
+L.push('Utilise la recherche web pour consulter les circulaires en ligne des detaillants et valider les prix quand c est possible.');
+L.push('Donne entre 18 et 32 items, les plus economiques et les plus utiles pour cuisiner des repas familiaux complets.');
+}
+L.push('');
+L.push('Priorise: proteines (viandes, volailles, poissons, oeufs, legumineuses, tofu), fruits et legumes, produits laitiers, feculents de base.');
+L.push('Prix en dollars canadiens. Precise le format (ex: /lb, /kg, 500 g, paquet de 12).');
+L.push('Si un prix est estime ou incertain, mets incertain a true.');
+L.push('Categories permises: ' + CATEGORIES.join(' | '));
+L.push('');
+L.push('Reponds UNIQUEMENT avec ce JSON:');
+L.push('{');
+L.push(' "semaine": "texte court",');
+L.push(' "note": "avertissement court sur la fiabilite des prix",');
+L.push(' "rabais": [');
+L.push(' {"produit": "", "categorie": "", "magasin": "", "prix": 0, "unite": "", "prixRegulier": 0, "valide": "", "note": "", "incertain": false}');
+L.push(' ]');
+L.push('}');
+return L.join('\n');
 }
 function appliquerRabais(data, sources) {
-  var arr = Array.isArray(data.rabais) ? data.rabais : [];
-  if (!arr.length) throw new Error('Aucun rabais retourné par l’IA.');
-  state.rabais.items = arr.map(function (o) {
-    return {
-      id: uid(),
-      garder: true,
-      produit: String(o.produit || '').slice(0, 120),
-      categorie: CATEGORIES.indexOf(o.categorie) >= 0 ? o.categorie : 'Autre',
-      magasin: String(o.magasin || '').slice(0, 40),
-      prix: num(o.prix),
-      unite: String(o.unite || '').slice(0, 40),
-      prixRegulier: num(o.prixRegulier),
-      valide: String(o.valide || '').slice(0, 60),
-      note: String(o.note || '').slice(0, 160),
-      incertain: !!o.incertain
-    };
-  });
-  state.rabais.note = String(data.note || '');
-  state.rabais.sources = sources || [];
-  state.rabais.generatedAt = new Date().toISOString();
-  save(); renderRabais();
+var arr = Array.isArray(data.rabais) ? data.rabais : [];
+if (!arr.length) throw new Error('Aucun rabais retourné par l’IA.');
+state.rabais.items = arr.map(function (o) {
+return {
+id: uid(),
+garder: true,
+produit: String(o.produit || '').slice(0, 120),
+categorie: CATEGORIES.indexOf(o.categorie) >= 0 ? o.categorie : 'Autre',
+magasin: String(o.magasin || '').slice(0, 40),
+prix: num(o.prix),
+unite: String(o.unite || '').slice(0, 40),
+prixRegulier: num(o.prixRegulier),
+valide: String(o.valide || '').slice(0, 60),
+note: String(o.note || '').slice(0, 160),
+incertain: !!o.incertain
+};
+});
+state.rabais.note = String(data.note || '');
+state.rabais.sources = sources || [];
+state.rabais.generatedAt = new Date().toISOString();
+save(); renderRabais();
 }
 function genRabais() {
-  if (!state.rabais.ville) { toast('Indiquez votre ville avant de générer les rabais.', 'err'); $('#ville').focus(); return; }
-  if (!(state.rabais.magasins || []).length) { toast('Choisissez au moins un magasin.', 'err'); return; }
-  var btn = $('#btnGenRabais');
-  btn.disabled = true;
-  setStatus('#rabaisStatus', 'Analyse des circulaires de la semaine pour ' + state.rabais.ville + '... (30 à 90 secondes)', 'busy');
-  aiCall({
-    system: 'Tu es un specialiste des circulaires d epicerie au Quebec et au Canada. Tu connais les prix courants et les formats des detaillants. Tu reponds UNIQUEMENT avec un objet JSON valide, sans texte avant ni apres, sans bloc de code markdown.',
-    prompt: promptRabais(null),
-    webSearch: true,
-    maxSearches: 8,
-    maxTokens: 8000,
-    userLocation: { type: 'approximate', city: state.rabais.ville, region: state.rabais.province || 'Quebec', country: 'CA', timezone: 'America/Toronto' }
-  }).then(function (res) {
-    appliquerRabais(extractJSON(res.content), res.sources);
-    setStatus('#rabaisStatus', state.rabais.items.length + ' aubaines trouvées. Vérifiez les prix en magasin et décochez ce qui ne vous intéresse pas.', 'ok');
-  }).catch(function (err) {
-    setStatus('#rabaisStatus', 'Erreur : ' + err.message, 'err');
-  }).then(function () { btn.disabled = false; });
+if (!state.rabais.ville) { toast('Indiquez votre ville avant de générer les rabais.', 'err'); $('#ville').focus(); return; }
+if (!(state.rabais.magasins || []).length) { toast('Choisissez au moins un magasin.', 'err'); return; }
+var btn = $('#btnGenRabais');
+btn.disabled = true;
+setStatus('#rabaisStatus', 'Analyse des circulaires de la semaine pour ' + state.rabais.ville + '... (30 à 90 secondes)', 'busy');
+aiCall({
+system: 'Tu es un specialiste des circulaires d epicerie au Quebec et au Canada. Tu connais les prix courants et les formats des detaillants. Tu reponds UNIQUEMENT avec un objet JSON valide, sans texte avant ni apres, sans bloc de code markdown.',
+prompt: promptRabais(null),
+webSearch: true,
+maxSearches: 8,
+maxTokens: 8000,
+userLocation: { type: 'approximate', city: state.rabais.ville, region: state.rabais.province || 'Quebec', country: 'CA', timezone: 'America/Toronto' }
+}).then(function (res) {
+appliquerRabais(extractJSON(res.content), res.sources);
+setStatus('#rabaisStatus', state.rabais.items.length + ' aubaines trouvées. Vérifiez les prix en magasin et décochez ce qui ne vous intéresse pas.', 'ok');
+}).catch(function (err) {
+setStatus('#rabaisStatus', 'Erreur : ' + err.message, 'err');
+}).then(function () { btn.disabled = false; });
 }
 function parseCirculaire() {
-  var txt = ($('#circText').value || '').trim();
-  if (txt.length < 20) { toast('Collez d’abord le texte d’une circulaire.', 'err'); return; }
-  var btn = $('#btnParseCirc');
-  btn.disabled = true;
-  setStatus('#rabaisStatus', 'Extraction des rabais du texte collé...', 'busy');
-  aiCall({
-    system: 'Tu extrais des donnees structurees de circulaires d epicerie. Tu reponds UNIQUEMENT avec un objet JSON valide, sans texte autour.',
-    prompt: promptRabais(txt),
-    maxTokens: 8000
-  }).then(function (res) {
-    appliquerRabais(extractJSON(res.content), []);
-    setStatus('#rabaisStatus', state.rabais.items.length + ' items extraits du texte.', 'ok');
-    $('#circBox').classList.add('hidden');
-  }).catch(function (err) {
-    setStatus('#rabaisStatus', 'Erreur : ' + err.message, 'err');
-  }).then(function () { btn.disabled = false; });
+var txt = ($('#circText').value || '').trim();
+if (txt.length < 20) { toast('Collez d’abord le texte d’une circulaire.', 'err'); return; }
+var btn = $('#btnParseCirc');
+btn.disabled = true;
+setStatus('#rabaisStatus', 'Extraction des rabais du texte collé...', 'busy');
+aiCall({
+system: 'Tu extrais des donnees structurees de circulaires d epicerie. Tu reponds UNIQUEMENT avec un objet JSON valide, sans texte autour.',
+prompt: promptRabais(txt),
+maxTokens: 8000
+}).then(function (res) {
+appliquerRabais(extractJSON(res.content), []);
+setStatus('#rabaisStatus', state.rabais.items.length + ' items extraits du texte.', 'ok');
+$('#circBox').classList.add('hidden');
+}).catch(function (err) {
+setStatus('#rabaisStatus', 'Erreur : ' + err.message, 'err');
+}).then(function () { btn.disabled = false; });
 }
 
 /* ======================= PAGE 3 : RECETTES ======================= */
 function familleTexte() {
-  if (!state.membres.length) return 'Aucun profil saisi : viser 4 portions standard de 600 kcal.';
-  return state.membres.map(function (m) {
-    var g = grammes(m);
-    return '- ' + (m.nom || 'Personne') + ' : ' + num(m.age) + ' ans, ' + (m.sexe === 'F' ? 'femme/fille' : 'homme/garcon') +
-      ', ' + num(m.calories) + ' kcal/jour (' + g.prot + ' g proteines, ' + g.gluc + ' g glucides, ' + g.lip + ' g lipides)' +
-      ', restrictions: ' + (((m.restrictions || []).join(', ')) || 'aucune') +
-      (m.allergies ? ', allergies: ' + m.allergies : '') +
-      (m.aimes ? ', aime: ' + m.aimes : '') +
-      (m.evite ? ', a eviter: ' + m.evite : '');
-  }).join('\n');
+if (!state.membres.length) return 'Aucun profil saisi : viser 4 portions standard de 600 kcal.';
+return state.membres.map(function (m) {
+var g = grammes(m);
+return '- ' + (m.nom || 'Personne') + ' : ' + num(m.age) + ' ans, ' + (m.sexe === 'F' ? 'femme/fille' : 'homme/garcon') +
+', ' + num(m.calories) + ' kcal/jour (' + g.prot + ' g proteines, ' + g.gluc + ' g glucides, ' + g.lip + ' g lipides)' +
+', restrictions: ' + (((m.restrictions || []).join(', ')) || 'aucune') +
+(m.allergies ? ', allergies: ' + m.allergies : '') +
+(m.aimes ? ', aime: ' + m.aimes : '') +
+(m.evite ? ', a eviter: ' + m.evite : '');
+}).join('\n');
 }
 function rabaisTexte() {
-  var g = (state.rabais.items || []).filter(function (i) { return i.garder; });
-  if (!g.length) return 'Aucun rabais disponible.';
-  return g.map(function (i) {
-    return '- ' + i.produit + ' | ' + (i.magasin || 'magasin inconnu') + ' | ' + money(i.prix) + (i.unite ? ' ' + i.unite : '') +
-      (num(i.prixRegulier) > num(i.prix) ? ' (regulier ' + money(i.prixRegulier) + ')' : '') +
-      (i.categorie ? ' | ' + i.categorie : '');
-  }).join('\n');
+var g = (state.rabais.items || []).filter(function (i) { return i.garder; });
+if (!g.length) return 'Aucun rabais disponible.';
+return g.map(function (i) {
+return '- ' + i.produit + ' | ' + (i.magasin || 'magasin inconnu') + ' | ' + money(i.prix) + (i.unite ? ' ' + i.unite : '') +
+(num(i.prixRegulier) > num(i.prix) ? ' (regulier ' + money(i.prixRegulier) + ')' : '') +
+(i.categorie ? ' | ' + i.categorie : '');
+}).join('\n');
 }
 function promptRecettes() {
-  var p = state.recettes.params;
-  var nb = Math.max(1, Math.min(14, num(p.jours, 5))) * Math.max(1, (p.repas || ['Souper']).length);
-  nb = Math.min(nb, 14);
-  var L = [];
-  L.push('PROFILS DE LA FAMILLE (a respecter pour les quantites, les calories et les macros) :');
-  L.push(familleTexte());
-  L.push('');
-  L.push('RABAIS DE LA SEMAINE A UTILISER EN PRIORITE (ville: ' + (state.rabais.ville || 'n/d') + ', semaine du ' + dateFr(state.rabais.semaine) + ') :');
-  L.push(rabaisTexte());
-  L.push('');
-  L.push('PARAMETRES :');
-  L.push('- Jours a couvrir: ' + num(p.jours, 5));
-  L.push('- Repas demandes: ' + (p.repas || ['Souper']).join(', '));
-  L.push('- Temps de preparation maximal: ' + num(p.temps, 45) + ' minutes');
-  L.push('- Budget cible pour la periode: ' + money(p.budget));
-  if (p.style) L.push('- Style de cuisine souhaite: ' + p.style);
-  L.push('- ' + (p.onlyDeals ? 'Maximiser l utilisation des items en rabais (economie maximale).' : 'Les rabais sont un atout mais pas une obligation.'));
-  if (p.restes) L.push('- Prévoir des portions supplémentaires pour les lunchs (restes).');
-  L.push('');
-  L.push('TACHE : propose ' + nb + ' recettes differentes, economiques, realistes et equilibrees.');
-  L.push('Regles importantes :');
-  L.push('1. Respecter toutes les restrictions et allergies : aucune recette ne doit contenir un aliment interdit.');
-  L.push('2. Ajuster les quantites au nombre exact de personnes (' + Math.max(1, state.membres.length) + ') et a leurs besoins caloriques.');
-  L.push('3. Utiliser en priorite les produits en rabais listes plus haut et indiquer le magasin pour chaque ingredient.');
-  L.push('4. Calculer les macros par portion de facon realiste et coherente avec les besoins de la famille.');
-  L.push('5. Les couts sont en dollars canadiens et bases sur les prix en rabais quand ils existent.');
-  L.push('6. Varier les sources de proteines et les legumes.');
-  L.push('');
-  L.push('Categories d ingredients permises: ' + CATEGORIES.join(' | '));
-  L.push('');
-  L.push('Reponds UNIQUEMENT avec ce JSON :');
-  L.push('{');
-  L.push('  "resume": "phrase courte sur les economies realisees",');
-  L.push('  "recettes": [');
-  L.push('    {');
-  L.push('      "nom": "", "repas": "Souper", "jour": 1, "tempsMinutes": 30, "portions": 4,');
-  L.push('      "coutTotal": 0, "coutParPortion": 0, "economie": 0,');
-  L.push('      "macrosParPortion": {"calories": 0, "proteines": 0, "glucides": 0, "lipides": 0},');
-  L.push('      "ingredients": [{"nom": "", "quantite": 0, "unite": "g", "categorie": "", "magasin": "", "enRabais": false, "cout": 0}],');
-  L.push('      "etapes": ["", ""],');
-  L.push('      "parPersonne": [{"nom": "", "portions": 1, "calories": 0}],');
-  L.push('      "respecte": ["Sans gluten"],');
-  L.push('      "notes": ""');
-  L.push('    }');
-  L.push('  ]');
-  L.push('}');
-  return L.join('\n');
+var p = state.recettes.params;
+var nb = Math.max(1, Math.min(14, num(p.jours, 5))) * Math.max(1, (p.repas || ['Souper']).length);
+nb = Math.min(nb, 14);
+var L = [];
+L.push('PROFILS DE LA FAMILLE (a respecter pour les quantites, les calories et les macros) :');
+L.push(familleTexte());
+L.push('');
+L.push('RABAIS DE LA SEMAINE A UTILISER EN PRIORITE (ville: ' + (state.rabais.ville || 'n/d') + ', semaine du ' + dateFr(state.rabais.semaine) + ') :');
+L.push(rabaisTexte());
+L.push('');
+L.push('PARAMETRES :');
+L.push('- Jours a couvrir: ' + num(p.jours, 5));
+L.push('- Repas demandes: ' + (p.repas || ['Souper']).join(', '));
+L.push('- Temps de preparation maximal: ' + num(p.temps, 45) + ' minutes');
+L.push('- Budget cible pour la periode: ' + money(p.budget));
+if (p.style) L.push('- Style de cuisine souhaite: ' + p.style);
+L.push('- ' + (p.onlyDeals ? 'Maximiser l utilisation des items en rabais (economie maximale).' : 'Les rabais sont un atout mais pas une obligation.'));
+if (p.restes) L.push('- Prévoir des portions supplémentaires pour les lunchs (restes).');
+L.push('');
+L.push('TACHE : propose ' + nb + ' recettes differentes, economiques, realistes, equilibrees ET DETAILLEES.');
+L.push('Regles importantes :');
+L.push('1. Respecter toutes les restrictions et allergies : aucune recette ne doit contenir un aliment interdit.');
+L.push('2. Ajuster les quantites au nombre exact de personnes (' + Math.max(1, state.membres.length) + ') et a leurs besoins caloriques.');
+L.push('3. Utiliser en priorite les produits en rabais listes plus haut et indiquer le magasin pour chaque ingredient.');
+L.push('4. Calculer les macros par portion de facon realiste et coherente avec les besoins de la famille, incluant fibres, sucres et sodium.');
+L.push('5. Les couts sont en dollars canadiens et bases sur les prix en rabais quand ils existent.');
+L.push('6. Varier les sources de proteines et les legumes.');
+L.push('7. Donner une description courte et appetissante de chaque recette (2-3 phrases).');
+L.push('8. Lister les ustensiles et contenants necessaires (poele, four, mijoteuse, etc.).');
+L.push('9. Donner des etapes de preparation detaillees et numerotees (au moins 5 etapes claires, avec temperatures et temps de cuisson precis).');
+L.push('10. Ajouter des conseils pratiques : substitutions possibles, conservation, rechauffage, variantes.');
+L.push('11. Donner les quantites d ingredients en grammes ou millilitres autant que possible (plutot qu en "unite") pour permettre un calcul precis par personne.');
+L.push('');
+L.push('Categories d ingredients permises: ' + CATEGORIES.join(' | '));
+L.push('');
+L.push('Reponds UNIQUEMENT avec ce JSON :');
+L.push('{');
+L.push(' "resume": "phrase courte sur les economies realisees",');
+L.push(' "recettes": [');
+L.push(' {');
+L.push(' "nom": "", "description": "", "repas": "Souper", "jour": 1, "tempsPreparation": 15, "tempsCuisson": 20, "tempsMinutes": 30, "portions": 4,');
+L.push(' "ustensiles": ["", ""],');
+L.push(' "coutTotal": 0, "coutParPortion": 0, "economie": 0,');
+L.push(' "macrosParPortion": {"calories": 0, "proteines": 0, "glucides": 0, "lipides": 0, "fibres": 0, "sucres": 0, "sodium": 0},');
+L.push(' "ingredients": [{"nom": "", "quantite": 0, "unite": "g", "categorie": "", "magasin": "", "enRabais": false, "cout": 0}],');
+L.push(' "etapes": ["", ""],');
+L.push(' "conseils": "",');
+L.push(' "parPersonne": [{"nom": "", "portions": 1, "calories": 0}],');
+L.push(' "respecte": ["Sans gluten"],');
+L.push(' "notes": ""');
+L.push(' }');
+L.push(' ]');
+L.push('}');
+return L.join('\n');
+}
+function versGrammes(qte, unite) {
+var c = convUnite(num(qte), unite);
+if (c.u === 'g' || c.u === 'ml') return c.q;
+return null;
 }
 function recetteCardHTML(r, i) {
-  var m = r.macrosParPortion || {};
-  var nbRab = (r.ingredients || []).filter(function (x) { return x.enRabais; }).length;
-  var tot = (r.ingredients || []).length || 1;
-  return '<div class="rcard' + (r.choisie ? ' sel' : '') + '">' +
-    '<div class="mtop"><h3>' + esc(r.nom || 'Recette') + '</h3>' +
-      '<label class="check" style="margin:0"><input type="checkbox" data-rec="' + i + '" data-f="choisie"' + (r.choisie ? ' checked' : '') + '> Choisir</label>' +
-    '</div>' +
-    '<div class="rmeta">' +
-      '<span class="badge info">' + esc(r.repas || 'Repas') + (r.jour ? ' - jour ' + num(r.jour) : '') + '</span>' +
-      '<span class="badge">' + num(r.tempsMinutes) + ' min</span>' +
-      '<span class="badge">' + num(r.portions) + ' portions</span>' +
-      '<span class="badge deal">' + money(r.coutParPortion) + ' / portion</span>' +
-      '<span class="badge">' + money(r.coutTotal) + ' total</span>' +
-      (nbRab ? '<span class="badge deal">' + Math.round(nbRab / tot * 100) + ' % en rabais</span>' : '') +
-    '</div>' +
-    '<div class="leg">' +
-      '<span><em>' + r0(m.calories) + '</em> kcal/portion</span>' +
-      '<span><span class="dot" style="background:#5b9dff"></span><em>' + r0(m.proteines) + ' g</em> prot.</span>' +
-      '<span><span class="dot" style="background:#3ddc97"></span><em>' + r0(m.glucides) + ' g</em> gluc.</span>' +
-      '<span><span class="dot" style="background:#ffc061"></span><em>' + r0(m.lipides) + ' g</em> lip.</span>' +
-    '</div>' +
-    ((r.respecte || []).length ? '<div class="chips">' + (r.respecte || []).map(function (x) { return '<span class="badge deal">' + esc(x) + '</span>'; }).join('') + '</div>' : '') +
-    '<div class="row wrap"><label style="flex:1 1 120px;margin:0">Portions à préparer<input type="number" min="1" max="30" data-rec="' + i + '" data-f="portionsVoulues" value="' + num(r.portionsVoulues || r.portions || 4) + '"></label></div>' +
-    '<details class="rdet"><summary>Voir les ingrédients et la préparation</summary>' +
-      '<div class="lab">Ingrédients</div><ul>' +
-      (r.ingredients || []).map(function (g) {
-        return '<li>' + esc(g.nom) + ' - <b>' + r1(g.quantite) + ' ' + esc(g.unite || '') + '</b>' +
-          (g.magasin ? ' <span class="mut">(' + esc(g.magasin) + ')</span>' : '') +
-          (g.enRabais ? ' <span class="badge deal">rabais</span>' : '') +
-          (num(g.cout) ? ' <span class="mut">' + money(g.cout) + '</span>' : '') + '</li>';
-      }).join('') + '</ul>' +
-      '<div class="lab">Préparation</div><ol>' +
-      (r.etapes || []).map(function (e) { return '<li>' + esc(e) + '</li>'; }).join('') + '</ol>' +
-      ((r.parPersonne || []).length ? '<div class="lab">Répartition par personne</div><ul>' +
-        (r.parPersonne || []).map(function (pp) { return '<li>' + esc(pp.nom) + ' : ' + r1(pp.portions) + ' portion(s)' + (num(pp.calories) ? ' - ' + r0(pp.calories) + ' kcal' : '') + '</li>'; }).join('') + '</ul>' : '') +
-      (r.notes ? '<p class="mut small mt">' + esc(r.notes) + '</p>' : '') +
-    '</details>' +
-    '</div>';
+var m = r.macrosParPortion || {};
+var nbRab = (r.ingredients || []).filter(function (x) { return x.enRabais; }).length;
+var tot = (r.ingredients || []).length || 1;
+var portionsTotal = Math.max(1, num(r.portions, 1));
+return '<div class="rcard' + (r.choisie ? ' sel' : '') + '">' +
+'<div class="mtop"><h3>' + esc(r.nom || 'Recette') + '</h3>' +
+'<label class="check" style="margin:0"><input type="checkbox" data-rec="' + i + '" data-f="choisie"' + (r.choisie ? ' checked' : '') + '> Choisir</label>' +
+'</div>' +
+(r.description ? '<p class="mut small">' + esc(r.description) + '</p>' : '') +
+'<div class="rmeta">' +
+'<span class="badge info">' + esc(r.repas || 'Repas') + (r.jour ? ' - jour ' + num(r.jour) : '') + '</span>' +
+((num(r.tempsPreparation) || num(r.tempsCuisson)) ? '<span class="badge">Prép. ' + num(r.tempsPreparation || 0) + ' min + cuisson ' + num(r.tempsCuisson || 0) + ' min</span>' : '<span class="badge">' + num(r.tempsMinutes) + ' min</span>') +
+'<span class="badge">' + num(r.portions) + ' portions</span>' +
+'<span class="badge deal">' + money(r.coutParPortion) + ' / portion</span>' +
+'<span class="badge">' + money(r.coutTotal) + ' total</span>' +
+(nbRab ? '<span class="badge deal">' + Math.round(nbRab / tot * 100) + ' % en rabais</span>' : '') +
+'</div>' +
+'<div class="leg">' +
+'<span><em>' + r0(m.calories) + '</em> kcal/portion</span>' +
+'<span><span class="dot" style="background:#5b9dff"></span><em>' + r0(m.proteines) + ' g</em> prot.</span>' +
+'<span><span class="dot" style="background:#3ddc97"></span><em>' + r0(m.glucides) + ' g</em> gluc.</span>' +
+'<span><span class="dot" style="background:#ffc061"></span><em>' + r0(m.lipides) + ' g</em> lip.</span>' +
+(num(m.fibres) ? '<span><em>' + r0(m.fibres) + ' g</em> fibres</span>' : '') +
+(num(m.sucres) ? '<span><em>' + r0(m.sucres) + ' g</em> sucres</span>' : '') +
+(num(m.sodium) ? '<span><em>' + r0(m.sodium) + ' mg</em> sodium</span>' : '') +
+'</div>' +
+((r.respecte || []).length ? '<div class="chips">' + (r.respecte || []).map(function (x) { return '<span class="badge deal">' + esc(x) + '</span>'; }).join('') + '</div>' : '') +
+'<div class="row wrap"><label style="flex:1 1 120px;margin:0">Portions à préparer<input type="number" min="1" max="30" data-rec="' + i + '" data-f="portionsVoulues" value="' + num(r.portionsVoulues || r.portions || 4) + '"></label></div>' +
+'<details class="rdet"><summary>Voir les ingrédients et la préparation</summary>' +
+((r.ustensiles || []).length ? '<div class="lab">Ustensiles</div><p class="small mut">' + (r.ustensiles || []).map(esc).join(', ') + '</p>' : '') +
+'<div class="lab">Ingrédients</div><ul>' +
+(r.ingredients || []).map(function (g) {
+var gp = versGrammes(g.quantite, g.unite);
+var parPortionTxt = gp != null ? ' <span class="mut">(' + r1(gp / portionsTotal) + ' g/portion)</span>' : '';
+return '<li>' + esc(g.nom) + ' - <b>' + r1(g.quantite) + ' ' + esc(g.unite || '') + '</b>' + parPortionTxt +
+(g.magasin ? ' <span class="mut">(' + esc(g.magasin) + ')</span>' : '') +
+(g.enRabais ? ' <span class="badge deal">rabais</span>' : '') +
+(num(g.cout) ? ' <span class="mut">' + money(g.cout) + '</span>' : '') + '</li>';
+}).join('') + '</ul>' +
+'<div class="lab">Préparation</div><ol>' +
+(r.etapes || []).map(function (e) { return '<li>' + esc(e) + '</li>'; }).join('') + '</ol>' +
+(r.conseils ? '<div class="lab">Conseils</div><p class="small mut">' + esc(r.conseils) + '</p>' : '') +
+((r.parPersonne || []).length ? '<div class="lab">Répartition par personne (grammes par composante)</div><ul>' +
+(r.parPersonne || []).map(function (pp) {
+var detail = (r.ingredients || []).map(function (g) {
+var gp = versGrammes(g.quantite, g.unite);
+if (gp == null) return '';
+var grPersonne = (gp / portionsTotal) * num(pp.portions, 1);
+return '<li>' + esc(g.nom) + ' : <b>' + r1(grPersonne) + ' g</b></li>';
+}).join('');
+return '<li>' + esc(pp.nom) + ' : ' + r1(pp.portions) + ' portion(s)' + (num(pp.calories) ? ' - ' + r0(pp.calories) + ' kcal' : '') +
+(detail ? '<ul class="small mut">' + detail + '</ul>' : '') + '</li>';
+}).join('') + '</ul>' : '') +
+(r.notes ? '<p class="mut small mt">' + esc(r.notes) + '</p>' : '') +
+'</details>' +
+'</div>';
 }
 function renderRecettes() {
-  var items = state.recettes.items || [];
-  var box = $('#recettesList');
-  box.innerHTML = items.length ? items.map(recetteCardHTML).join('') :
-    '<div class="card"><p class="mut">Aucune recette pour le moment. Remplissez la page 1, générez les rabais à la page 2, puis cliquez sur <b>Générer les recettes avec l\'IA</b>.</p></div>';
-  var choisies = items.filter(function (r) { return r.choisie; });
-  var cout = 0, eco = 0, kcal = 0;
-  choisies.forEach(function (r) {
-    var f = num(r.portionsVoulues || r.portions, 1) / Math.max(1, num(r.portions, 1));
-    cout += num(r.coutTotal) * f;
-    eco += num(r.economie) * f;
-    kcal += num((r.macrosParPortion || {}).calories) * num(r.portionsVoulues || r.portions, 1);
-  });
-  var budget = num(state.recettes.params.budget);
-  $('#recettesResume').innerHTML = '<div class="kpis">' +
-    '<div class="kpi"><span>Recettes proposées</span><b>' + items.length + '</b></div>' +
-    '<div class="kpi"><span>Choisies</span><b>' + choisies.length + '</b></div>' +
-    '<div class="kpi"><span>Coût des choix</span><b>' + money(cout) + '</b></div>' +
-    '<div class="kpi"><span>Économie estimée</span><b>' + money(eco) + '</b></div>' +
-    '<div class="kpi"><span>Budget restant</span><b style="color:' + (budget - cout < 0 ? '#ff7a7a' : '#3ddc97') + '">' + money(budget - cout) + '</b></div>' +
-    '</div>' + (state.recettes.resume ? '<p class="mut small mt">' + esc(state.recettes.resume) + '</p>' : '');
+var items = state.recettes.items || [];
+var box = $('#recettesList');
+box.innerHTML = items.length ? items.map(recetteCardHTML).join('') :
+'<div class="card"><p class="mut">Aucune recette pour le moment. Remplissez la page 1, générez les rabais à la page 2, puis cliquez sur <b>Générer les recettes avec l\'IA</b>.</p></div>';
+var choisies = items.filter(function (r) { return r.choisie; });
+var cout = 0, eco = 0, kcal = 0;
+choisies.forEach(function (r) {
+var f = num(r.portionsVoulues || r.portions, 1) / Math.max(1, num(r.portions, 1));
+cout += num(r.coutTotal) * f;
+eco += num(r.economie) * f;
+kcal += num((r.macrosParPortion || {}).calories) * num(r.portionsVoulues || r.portions, 1);
+});
+var budget = num(state.recettes.params.budget);
+$('#recettesResume').innerHTML = '<div class="kpis">' +
+'<div class="kpi"><span>Recettes proposées</span><b>' + items.length + '</b></div>' +
+'<div class="kpi"><span>Choisies</span><b>' + choisies.length + '</b></div>' +
+'<div class="kpi"><span>Coût des choix</span><b>' + money(cout) + '</b></div>' +
+'<div class="kpi"><span>Économie estimée</span><b>' + money(eco) + '</b></div>' +
+'<div class="kpi"><span>Budget restant</span><b style="color:' + (budget - cout < 0 ? '#ff7a7a' : '#3ddc97') + '">' + money(budget - cout) + '</b></div>' +
+'</div>' + (state.recettes.resume ? '<p class="mut small mt">' + esc(state.recettes.resume) + '</p>' : '');
 }
 function bindRecettes() {
-  var p = state.recettes.params;
-  $('#rJours').value = num(p.jours, 5);
-  $('#rTemps').value = num(p.temps, 45);
-  $('#rBudget').value = num(p.budget, 150);
-  $('#rStyle').value = p.style || '';
-  $('#rOnlyDeals').checked = !!p.onlyDeals;
-  $('#rRestes').checked = !!p.restes;
-  $('#rRepas').innerHTML = chipsHTML(REPAS, p.repas || ['Souper'], 'data-val');
-  $('#rRepas').addEventListener('click', function (e) {
-    var chip = e.target.closest('.chip');
-    if (!chip) return;
-    var v = chip.getAttribute('data-val');
-    p.repas = p.repas || [];
-    var k = p.repas.indexOf(v);
-    if (k >= 0) p.repas.splice(k, 1); else p.repas.push(v);
-    chip.classList.toggle('on');
-    save();
-  });
-  [['rJours', 'jours'], ['rTemps', 'temps'], ['rBudget', 'budget'], ['rStyle', 'style']].forEach(function (pair) {
-    $('#' + pair[0]).addEventListener('change', function () {
-      p[pair[1]] = pair[1] === 'style' ? this.value : num(this.value);
-      save(); renderRecettes();
-    });
-  });
-  $('#rOnlyDeals').addEventListener('change', function () { p.onlyDeals = this.checked; save(); });
-  $('#rRestes').addEventListener('change', function () { p.restes = this.checked; save(); });
-  $('#btnGenRecettes').addEventListener('click', genRecettes);
-  $('#btnSelectAllRec').addEventListener('click', function () {
-    var tout = (state.recettes.items || []).every(function (r) { return r.choisie; });
-    (state.recettes.items || []).forEach(function (r) { r.choisie = !tout; });
-    save(); renderRecettes();
-  });
-  $('#btnClearRecettes').addEventListener('click', function () {
-    if (!(state.recettes.items || []).length || !confirm('Supprimer les recettes générées ?')) return;
-    state.recettes.items = []; state.recettes.resume = '';
-    save(); renderRecettes();
-  });
-  $('#recettesList').addEventListener('change', function (e) {
-    var el = e.target, i = el.getAttribute('data-rec'), f = el.getAttribute('data-f');
-    if (i === null || !f) return;
-    var r = state.recettes.items[+i];
-    if (!r) return;
-    r[f] = el.type === 'checkbox' ? el.checked : num(el.value);
-    save(); renderRecettes();
-  });
+var p = state.recettes.params;
+$('#rJours').value = num(p.jours, 5);
+$('#rTemps').value = num(p.temps, 45);
+$('#rBudget').value = num(p.budget, 150);
+$('#rStyle').value = p.style || '';
+$('#rOnlyDeals').checked = !!p.onlyDeals;
+$('#rRestes').checked = !!p.restes;
+$('#rRepas').innerHTML = chipsHTML(REPAS, p.repas || ['Souper'], 'data-val');
+$('#rRepas').addEventListener('click', function (e) {
+var chip = e.target.closest('.chip');
+if (!chip) return;
+var v = chip.getAttribute('data-val');
+p.repas = p.repas || [];
+var k = p.repas.indexOf(v);
+if (k >= 0) p.repas.splice(k, 1); else p.repas.push(v);
+chip.classList.toggle('on');
+save();
+});
+[['rJours', 'jours'], ['rTemps', 'temps'], ['rBudget', 'budget'], ['rStyle', 'style']].forEach(function (pair) {
+$('#' + pair[0]).addEventListener('change', function () {
+p[pair[1]] = pair[1] === 'style' ? this.value : num(this.value);
+save(); renderRecettes();
+});
+});
+$('#rOnlyDeals').addEventListener('change', function () { p.onlyDeals = this.checked; save(); });
+$('#rRestes').addEventListener('change', function () { p.restes = this.checked; save(); });
+$('#btnGenRecettes').addEventListener('click', genRecettes);
+$('#btnSelectAllRec').addEventListener('click', function () {
+var tout = (state.recettes.items || []).every(function (r) { return r.choisie; });
+(state.recettes.items || []).forEach(function (r) { r.choisie = !tout; });
+save(); renderRecettes();
+});
+$('#btnClearRecettes').addEventListener('click', function () {
+if (!(state.recettes.items || []).length || !confirm('Supprimer les recettes générées ?')) return;
+state.recettes.items = []; state.recettes.resume = '';
+save(); renderRecettes();
+});
+$('#recettesList').addEventListener('change', function (e) {
+var el = e.target, i = el.getAttribute('data-rec'), f = el.getAttribute('data-f');
+if (i === null || !f) return;
+var r = state.recettes.items[+i];
+if (!r) return;
+r[f] = el.type === 'checkbox' ? el.checked : num(el.value);
+save(); renderRecettes();
+});
 }
 function genRecettes() {
-  if (!state.membres.length && !confirm('Aucun profil familial n’est saisi. Générer quand même des recettes standard ?')) return;
-  var btn = $('#btnGenRecettes');
-  btn.disabled = true;
-  setStatus('#recettesStatus', 'Création des recettes selon vos macros et les rabais... (30 à 90 secondes)', 'busy');
-  aiCall({
-    system: 'Tu es un nutritionniste et chef de cuisine familiale au Quebec. Tu planifies des repas economiques qui respectent des cibles caloriques, des macros et des restrictions alimentaires. Tu reponds UNIQUEMENT avec un objet JSON valide, sans texte avant ni apres, sans bloc de code markdown.',
-    prompt: promptRecettes(),
-    maxTokens: 14000
-  }).then(function (res) {
-    var data = extractJSON(res.content);
-    var arr = Array.isArray(data.recettes) ? data.recettes : [];
-    if (!arr.length) throw new Error('Aucune recette retournée.');
-    state.recettes.items = arr.map(function (r) {
-      r.id = uid();
-      r.choisie = true;
-      r.portions = num(r.portions, Math.max(1, state.membres.length));
-      r.portionsVoulues = r.portions;
-      r.ingredients = Array.isArray(r.ingredients) ? r.ingredients : [];
-      r.etapes = Array.isArray(r.etapes) ? r.etapes : [];
-      return r;
-    });
-    state.recettes.resume = String(data.resume || '');
-    state.recettes.generatedAt = new Date().toISOString();
-    save(); renderRecettes();
-    setStatus('#recettesStatus', state.recettes.items.length + ' recettes proposées. Décochez celles que vous ne voulez pas, puis passez à la liste d’épicerie.', 'ok');
-  }).catch(function (err) {
-    setStatus('#recettesStatus', 'Erreur : ' + err.message, 'err');
-  }).then(function () { btn.disabled = false; });
+if (!state.membres.length && !confirm('Aucun profil familial n’est saisi. Générer quand même des recettes standard ?')) return;
+var btn = $('#btnGenRecettes');
+btn.disabled = true;
+setStatus('#recettesStatus', 'Création des recettes selon vos macros et les rabais... (30 à 90 secondes)', 'busy');
+aiCall({
+system: 'Tu es un nutritionniste et chef de cuisine familiale au Quebec. Tu planifies des repas economiques qui respectent des cibles caloriques, des macros et des restrictions alimentaires. Tu reponds UNIQUEMENT avec un objet JSON valide, sans texte avant ni apres, sans bloc de code markdown.',
+prompt: promptRecettes(),
+maxTokens: 14000
+}).then(function (res) {
+var data = extractJSON(res.content);
+var arr = Array.isArray(data.recettes) ? data.recettes : [];
+if (!arr.length) throw new Error('Aucune recette retournée.');
+state.recettes.items = arr.map(function (r) {
+r.id = uid();
+r.choisie = true;
+r.portions = num(r.portions, Math.max(1, state.membres.length));
+r.portionsVoulues = r.portions;
+r.ingredients = Array.isArray(r.ingredients) ? r.ingredients : [];
+r.etapes = Array.isArray(r.etapes) ? r.etapes : [];
+return r;
+});
+state.recettes.resume = String(data.resume || '');
+state.recettes.generatedAt = new Date().toISOString();
+save(); renderRecettes();
+setStatus('#recettesStatus', state.recettes.items.length + ' recettes proposées. Décochez celles que vous ne voulez pas, puis passez à la liste d’épicerie.', 'ok');
+}).catch(function (err) {
+setStatus('#recettesStatus', 'Erreur : ' + err.message, 'err');
+}).then(function () { btn.disabled = false; });
 }
 
 /* ======================= PAGE 4 : LISTE D EPICERIE ======================= */
 function convUnite(q, u) {
-  var un = normal(u);
-  if (un === 'kg') return { q: q * 1000, u: 'g' };
-  if (un === 'l' || un === 'litre' || un === 'litres') return { q: q * 1000, u: 'ml' };
-  if (un === 'lb' || un === 'livre' || un === 'livres') return { q: q * 454, u: 'g' };
-  return { q: q, u: un || 'unite' };
+var un = normal(u);
+if (un === 'kg') return { q: q * 1000, u: 'g' };
+if (un === 'l' || un === 'litre' || un === 'litres') return { q: q * 1000, u: 'ml' };
+if (un === 'lb' || un === 'livre' || un === 'livres') return { q: q * 454, u: 'g' };
+return { q: q, u: un || 'unite' };
 }
 function jolieQte(q, u) {
-  if (u === 'unite') u = 'unité';
-  if (u === 'g' && q >= 1000) return r1(q / 1000) + ' kg';
-  if (u === 'ml' && q >= 1000) return r1(q / 1000) + ' L';
-  return r1(q) + ' ' + u;
+if (u === 'unite') u = 'unité';
+if (u === 'g' && q >= 1000) return r1(q / 1000) + ' kg';
+if (u === 'ml' && q >= 1000) return r1(q / 1000) + ' L';
+return r1(q) + ' ' + u;
 }
 function trouverRabais(nom) {
-  var n = normal(nom);
-  if (!n) return null;
-  var res = null;
-  (state.rabais.items || []).forEach(function (it) {
-    if (!it.garder || res) return;
-    var p = normal(it.produit);
-    if (!p) return;
-    if (n.indexOf(p) >= 0 || p.indexOf(n) >= 0) res = it;
-  });
-  return res;
+var n = normal(nom);
+if (!n) return null;
+var res = null;
+(state.rabais.items || []).forEach(function (it) {
+if (!it.garder || res) return;
+var p = normal(it.produit);
+if (!p) return;
+if (n.indexOf(p) >= 0 || p.indexOf(n) >= 0) res = it;
+});
+return res;
 }
 function storeOptions(courant) {
-  var l = (state.epicerie.magasins || []).slice();
-  if (courant && l.indexOf(courant) < 0) l.push(courant);
-  if (l.indexOf('À déterminer') < 0) l.push('À déterminer');
-  return l;
+var l = (state.epicerie.magasins || []).slice();
+if (courant && l.indexOf(courant) < 0) l.push(courant);
+if (l.indexOf('À déterminer') < 0) l.push('À déterminer');
+return l;
 }
 function générerListe() {
-  var choisies = (state.recettes.items || []).filter(function (r) { return r.choisie; });
-  if (!choisies.length) { toast('Choisissez au moins une recette à la page 3.', 'err'); return; }
-  var acces = state.epicerie.magasins || [];
-  var map = {};
-  choisies.forEach(function (r) {
-    var f = num(r.portionsVoulues || r.portions, 1) / Math.max(1, num(r.portions, 1));
-    (r.ingredients || []).forEach(function (g) {
-      if (!g || !g.nom) return;
-      var c = convUnite(num(g.quantite) * f, g.unite);
-      var key = normal(g.nom) + '|' + c.u;
-      var rab = trouverRabais(g.nom);
-      var mag = (rab && acces.indexOf(rab.magasin) >= 0) ? rab.magasin
-        : ((g.magasin && acces.indexOf(g.magasin) >= 0) ? g.magasin : (acces[0] || g.magasin || 'À déterminer'));
-      if (!map[key]) {
-        map[key] = {
-          id: uid(), nom: g.nom, qte: 0, unite: c.u,
-          categorie: CATEGORIES.indexOf(g.categorie) >= 0 ? g.categorie : 'Autre',
-          magasin: mag, enRabais: !!rab || !!g.enRabais, cout: 0, recettes: [], achete: false, manuel: false
-        };
-      }
-      map[key].qte += c.q;
-      map[key].cout += num(g.cout) * f;
-      if (map[key].recettes.indexOf(r.nom) < 0) map[key].recettes.push(r.nom);
-    });
-  });
-  var manuels = (state.epicerie.items || []).filter(function (i) { return i.manuel; });
-  state.epicerie.items = Object.keys(map).map(function (k) { return map[k]; }).concat(manuels);
-  state.epicerie.generatedAt = new Date().toISOString();
-  save(); renderEpicerie();
-  toast(state.epicerie.items.length + ' articles dans la liste.', 'ok');
+var choisies = (state.recettes.items || []).filter(function (r) { return r.choisie; });
+if (!choisies.length) { toast('Choisissez au moins une recette à la page 3.', 'err'); return; }
+var acces = state.epicerie.magasins || [];
+var map = {};
+choisies.forEach(function (r) {
+var f = num(r.portionsVoulues || r.portions, 1) / Math.max(1, num(r.portions, 1));
+(r.ingredients || []).forEach(function (g) {
+if (!g || !g.nom) return;
+var c = convUnite(num(g.quantite) * f, g.unite);
+var key = normal(g.nom) + '|' + c.u;
+var rab = trouverRabais(g.nom);
+var mag = (rab && acces.indexOf(rab.magasin) >= 0) ? rab.magasin
+: ((g.magasin && acces.indexOf(g.magasin) >= 0) ? g.magasin : (acces[0] || g.magasin || 'À déterminer'));
+if (!map[key]) {
+map[key] = {
+id: uid(), nom: g.nom, qte: 0, unite: c.u,
+categorie: CATEGORIES.indexOf(g.categorie) >= 0 ? g.categorie : 'Autre',
+magasin: mag, enRabais: !!rab || !!g.enRabais, cout: 0, recettes: [], achete: false, manuel: false
+};
+}
+map[key].qte += c.q;
+map[key].cout += num(g.cout) * f;
+if (map[key].recettes.indexOf(r.nom) < 0) map[key].recettes.push(r.nom);
+});
+});
+var manuels = (state.epicerie.items || []).filter(function (i) { return i.manuel; });
+state.epicerie.items = Object.keys(map).map(function (k) { return map[k]; }).concat(manuels);
+state.epicerie.generatedAt = new Date().toISOString();
+save(); renderEpicerie();
+toast(state.epicerie.items.length + ' articles dans la liste.', 'ok');
 }
 function itemHTML(it, i) {
-  return '<div class="item' + (it.achete ? ' done' : '') + '">' +
-    '<input type="checkbox" data-ep="' + i + '" data-f="achete"' + (it.achete ? ' checked' : '') + '>' +
-    '<span class="qte">' + jolieQte(num(it.qte), it.unite || 'unite') + '</span>' +
-    '<span class="nom">' + esc(it.nom) + (it.enRabais ? ' <span class="badge deal">rabais</span>' : '') +
-      (it.recettes && it.recettes.length ? ' <span class="mut small">(' + esc(it.recettes.slice(0, 2).join(', ')) + ')</span>' : '') + '</span>' +
-    '<select data-ep="' + i + '" data-f="magasin" style="width:130px;margin:0">' + optsHTML(storeOptions(it.magasin), it.magasin) + '</select>' +
-    '<span class="prix">' + money(it.cout) + '</span>' +
-    '<button class="btn ghost mini danger" data-dele="' + i + '">x</button>' +
-    '</div>';
+return '<div class="item' + (it.achete ? ' done' : '') + '">' +
+'<input type="checkbox" data-ep="' + i + '" data-f="achete"' + (it.achete ? ' checked' : '') + '>' +
+'<span class="qte">' + jolieQte(num(it.qte), it.unite || 'unite') + '</span>' +
+'<span class="nom">' + esc(it.nom) + (it.enRabais ? ' <span class="badge deal">rabais</span>' : '') +
+(it.recettes && it.recettes.length ? ' <span class="mut small">(' + esc(it.recettes.slice(0, 2).join(', ')) + ')</span>' : '') + '</span>' +
+'<select data-ep="' + i + '" data-f="magasin" style="width:130px;margin:0">' + optsHTML(storeOptions(it.magasin), it.magasin) + '</select>' +
+'<span class="prix">' + money(it.cout) + '</span>' +
+'<button class="btn ghost mini danger" data-dele="' + i + '">x</button>' +
+'</div>';
 }
 function renderEpicerie() {
-  var items = state.epicerie.items || [];
-  var total = 0, achetes = 0;
-  items.forEach(function (it) { total += num(it.cout); if (it.achete) achetes++; });
-  var eco = 0;
-  (state.recettes.items || []).filter(function (r) { return r.choisie; }).forEach(function (r) {
-    eco += num(r.economie) * (num(r.portionsVoulues || r.portions, 1) / Math.max(1, num(r.portions, 1)));
-  });
-  $('#epicerieKpis').innerHTML = '<div class="kpis">' +
-    '<div class="kpi"><span>Articles</span><b>' + items.length + '</b></div>' +
-    '<div class="kpi"><span>Déjà pris</span><b>' + achetes + '</b></div>' +
-    '<div class="kpi"><span>Coût estimé</span><b>' + money(total) + '</b></div>' +
-    '<div class="kpi"><span>Économie grâce aux rabais</span><b>' + money(eco) + '</b></div>' +
-    '<div class="kpi"><span>Épiceries</span><b style="font-size:15px">' + (state.epicerie.magasins || []).length + '</b></div>' +
-    '</div>' + (state.epicerie.note ? '<p class="mut small mt">' + esc(state.epicerie.note) + '</p>' : '');
+var items = state.epicerie.items || [];
+var total = 0, achetes = 0;
+items.forEach(function (it) { total += num(it.cout); if (it.achete) achetes++; });
+var eco = 0;
+(state.recettes.items || []).filter(function (r) { return r.choisie; }).forEach(function (r) {
+eco += num(r.economie) * (num(r.portionsVoulues || r.portions, 1) / Math.max(1, num(r.portions, 1)));
+});
+$('#epicerieKpis').innerHTML = '<div class="kpis">' +
+'<div class="kpi"><span>Articles</span><b>' + items.length + '</b></div>' +
+'<div class="kpi"><span>Déjà pris</span><b>' + achetes + '</b></div>' +
+'<div class="kpi"><span>Coût estimé</span><b>' + money(total) + '</b></div>' +
+'<div class="kpi"><span>Économie grâce aux rabais</span><b>' + money(eco) + '</b></div>' +
+'<div class="kpi"><span>Épiceries</span><b style="font-size:15px">' + (state.epicerie.magasins || []).length + '</b></div>' +
+'</div>' + (state.epicerie.note ? '<p class="mut small mt">' + esc(state.epicerie.note) + '</p>' : '');
 
-  if (!items.length) {
-    $('#epicerieList').innerHTML = '<div class="card"><p class="mut">La liste est vide. Choisissez vos épiceries accessibles puis cliquez sur <b>Générer la liste</b>.</p></div>';
-    return;
-  }
-  var byStore = {};
-  items.forEach(function (it, idx) {
-    var st = it.magasin || 'À déterminer';
-    if (!byStore[st]) byStore[st] = [];
-    byStore[st].push({ it: it, idx: idx });
-  });
-  $('#epicerieList').innerHTML = Object.keys(byStore).sort().map(function (st) {
-    var list = byStore[st];
-    var sub = 0;
-    list.forEach(function (o) { sub += num(o.it.cout); });
-    var byCat = {};
-    list.forEach(function (o) {
-      var c = o.it.categorie || 'Autre';
-      if (!byCat[c]) byCat[c] = [];
-      byCat[c].push(o);
-    });
-    var ordre = CATEGORIES.filter(function (c) { return byCat[c]; }).concat(Object.keys(byCat).filter(function (c) { return CATEGORIES.indexOf(c) < 0; }));
-    return '<div class="storeblock">' +
-      '<div class="storehead"><span>' + esc(st) + ' <span class="mut small">(' + list.length + ' articles)</span></span><span>' + money(sub) + '</span></div>' +
-      '<div class="storebody">' + ordre.map(function (cat) {
-        return '<div class="catname">' + esc(cat) + '</div>' + byCat[cat].map(function (o) { return itemHTML(o.it, o.idx); }).join('');
-      }).join('') + '</div></div>';
-  }).join('');
+if (!items.length) {
+$('#epicerieList').innerHTML = '<div class="card"><p class="mut">La liste est vide. Choisissez vos épiceries accessibles puis cliquez sur <b>Générer la liste</b>.</p></div>';
+return;
+}
+var byStore = {};
+items.forEach(function (it, idx) {
+var st = it.magasin || 'À déterminer';
+if (!byStore[st]) byStore[st] = [];
+byStore[st].push({ it: it, idx: idx });
+});
+$('#epicerieList').innerHTML = Object.keys(byStore).sort().map(function (st) {
+var list = byStore[st];
+var sub = 0;
+list.forEach(function (o) { sub += num(o.it.cout); });
+var byCat = {};
+list.forEach(function (o) {
+var c = o.it.categorie || 'Autre';
+if (!byCat[c]) byCat[c] = [];
+byCat[c].push(o);
+});
+var ordre = CATEGORIES.filter(function (c) { return byCat[c]; }).concat(Object.keys(byCat).filter(function (c) { return CATEGORIES.indexOf(c) < 0; }));
+return '<div class="storeblock">' +
+'<div class="storehead"><span>' + esc(st) + ' <span class="mut small">(' + list.length + ' articles)</span></span><span>' + money(sub) + '</span></div>' +
+'<div class="storebody">' + ordre.map(function (cat) {
+return '<div class="catname">' + esc(cat) + '</div>' + byCat[cat].map(function (o) { return itemHTML(o.it, o.idx); }).join('');
+}).join('') + '</div></div>';
+}).join('');
 }
 function listeTexte() {
-  var items = state.epicerie.items || [];
-  var L = ['LISTE D EPICERIE', (state.rabais.ville ? 'Ville : ' + state.rabais.ville : ''), 'Semaine du ' + dateFr(state.rabais.semaine), ''];
-  var byStore = {};
-  items.forEach(function (it) {
-    var st = it.magasin || 'À déterminer';
-    if (!byStore[st]) byStore[st] = [];
-    byStore[st].push(it);
-  });
-  var total = 0;
-  Object.keys(byStore).sort().forEach(function (st) {
-    L.push('=== ' + st.toUpperCase() + ' ===');
-    var sub = 0;
-    byStore[st].forEach(function (it) {
-      sub += num(it.cout);
-      L.push('[ ] ' + jolieQte(num(it.qte), it.unite || 'unite') + ' - ' + it.nom + (it.enRabais ? ' (rabais)' : '') + (num(it.cout) ? ' - ' + money(it.cout) : ''));
-    });
-    total += sub;
-    L.push('Sous-total : ' + money(sub));
-    L.push('');
-  });
-  L.push('TOTAL ESTIME : ' + money(total));
-  return L.join('\n');
+var items = state.epicerie.items || [];
+var L = ['LISTE D EPICERIE', (state.rabais.ville ? 'Ville : ' + state.rabais.ville : ''), 'Semaine du ' + dateFr(state.rabais.semaine), ''];
+var byStore = {};
+items.forEach(function (it) {
+var st = it.magasin || 'À déterminer';
+if (!byStore[st]) byStore[st] = [];
+byStore[st].push(it);
+});
+var total = 0;
+Object.keys(byStore).sort().forEach(function (st) {
+L.push('=== ' + st.toUpperCase() + ' ===');
+var sub = 0;
+byStore[st].forEach(function (it) {
+sub += num(it.cout);
+L.push('[ ] ' + jolieQte(num(it.qte), it.unite || 'unite') + ' - ' + it.nom + (it.enRabais ? ' (rabais)' : '') + (num(it.cout) ? ' - ' + money(it.cout) : ''));
+});
+total += sub;
+L.push('Sous-total : ' + money(sub));
+L.push('');
+});
+L.push('TOTAL ESTIME : ' + money(total));
+return L.join('\n');
+}
+function recettesChoisiesTexteHTML() {
+var choisies = (state.recettes.items || []).filter(function (r) { return r.choisie; });
+if (!choisies.length) return '<p><em>Aucune recette sélectionnée.</em></p>';
+return choisies.map(function (r) {
+var m = r.macrosParPortion || {};
+var portionsTotal = Math.max(1, num(r.portions, 1));
+var ingr = (r.ingredients || []).map(function (g) {
+return '<li>' + esc(g.nom) + ' — ' + r1(g.quantite) + ' ' + esc(g.unite || '') + (g.magasin ? ' (' + esc(g.magasin) + ')' : '') + '</li>';
+}).join('');
+var etapes = (r.etapes || []).map(function (e) { return '<li>' + esc(e) + '</li>'; }).join('');
+var parPersonne = (r.parPersonne || []).map(function (pp) {
+var detail = (r.ingredients || []).map(function (g) {
+var gp = versGrammes(g.quantite, g.unite);
+if (gp == null) return '';
+var grPersonne = (gp / portionsTotal) * num(pp.portions, 1);
+return '<li>' + esc(g.nom) + ' : ' + r1(grPersonne) + ' g</li>';
+}).join('');
+return '<li>' + esc(pp.nom) + ' — ' + r1(pp.portions) + ' portion(s)' + (num(pp.calories) ? ', ' + r0(pp.calories) + ' kcal' : '') + (detail ? '<ul>' + detail + '</ul>' : '') + '</li>';
+}).join('');
+return '<h2>' + esc(r.nom || 'Recette') + '</h2>' +
+(r.description ? '<p><em>' + esc(r.description) + '</em></p>' : '') +
+'<p><b>Repas :</b> ' + esc(r.repas || '') + (r.jour ? ' (jour ' + num(r.jour) + ')' : '') +
+' &nbsp; <b>Temps :</b> ' + num(r.tempsMinutes) + ' min' +
+' &nbsp; <b>Portions :</b> ' + num(r.portions) +
+' &nbsp; <b>Coût/portion :</b> ' + money(r.coutParPortion) + '</p>' +
+'<p><b>Par portion :</b> ' + r0(m.calories) + ' kcal, ' + r0(m.proteines) + ' g protéines, ' + r0(m.glucides) + ' g glucides, ' + r0(m.lipides) + ' g lipides' +
+(num(m.fibres) ? ', ' + r0(m.fibres) + ' g fibres' : '') + (num(m.sucres) ? ', ' + r0(m.sucres) + ' g sucres' : '') + (num(m.sodium) ? ', ' + r0(m.sodium) + ' mg sodium' : '') + '</p>' +
+((r.ustensiles || []).length ? '<p><b>Ustensiles :</b> ' + (r.ustensiles || []).map(esc).join(', ') + '</p>' : '') +
+'<p><b>Ingrédients</b></p><ul>' + ingr + '</ul>' +
+'<p><b>Préparation</b></p><ol>' + etapes + '</ol>' +
+(r.conseils ? '<p><b>Conseils :</b> ' + esc(r.conseils) + '</p>' : '') +
+(parPersonne ? '<p><b>Répartition par personne (grammes par composante)</b></p><ul>' + parPersonne + '</ul>' : '') +
+(r.notes ? '<p><em>' + esc(r.notes) + '</em></p>' : '') +
+'<hr>';
+}).join('');
+}
+function epicerieTexteHTML() {
+var items = state.epicerie.items || [];
+if (!items.length) return '<p><em>Liste d’épicerie vide.</em></p>';
+var byStore = {};
+items.forEach(function (it) {
+var st = it.magasin || 'À déterminer';
+if (!byStore[st]) byStore[st] = [];
+byStore[st].push(it);
+});
+var total = 0;
+var out = Object.keys(byStore).sort().map(function (st) {
+var sub = 0;
+var lignes = byStore[st].map(function (it) {
+sub += num(it.cout);
+return '<li>' + jolieQte(num(it.qte), it.unite || 'unite') + ' — ' + esc(it.nom) + (it.enRabais ? ' (rabais)' : '') + (num(it.cout) ? ' — ' + money(it.cout) : '') + '</li>';
+}).join('');
+total += sub;
+return '<h3>' + esc(st) + '</h3><ul>' + lignes + '</ul><p><b>Sous-total : ' + money(sub) + '</b></p>';
+}).join('');
+return out + '<p><b>TOTAL ESTIMÉ : ' + money(total) + '</b></p>';
+}
+function exporterWordDoc() {
+var choisies = (state.recettes.items || []).filter(function (r) { return r.choisie; });
+if (!choisies.length && !(state.epicerie.items || []).length) {
+toast('Aucune recette ni article à exporter.', 'err');
+return;
+}
+var titre = 'Recettes et liste d’épicerie — semaine du ' + esc(dateFr(state.rabais.semaine));
+var html = '<!DOCTYPE html><html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">' +
+'<head><meta charset="utf-8"><title>' + titre + '</title></head>' +
+'<body style="font-family:Calibri,Arial,sans-serif;font-size:14px;color:#111;">' +
+'<h1>' + titre + '</h1>' +
+'<p>Ville : ' + esc(state.rabais.ville || '-') + '</p>' +
+'<h1>Recettes de la semaine</h1>' +
+recettesChoisiesTexteHTML() +
+'<h1>Liste d’épicerie</h1>' +
+epicerieTexteHTML() +
+'</body></html>';
+var blob = new Blob(['\ufeff', html], { type: 'application/msword;charset=utf-8' });
+var a = document.createElement('a');
+a.href = URL.createObjectURL(blob);
+a.download = 'recettes-epicerie-semaine-' + (state.rabais.semaine || todayISO()) + '.doc';
+document.body.appendChild(a);
+a.click();
+document.body.removeChild(a);
+URL.revokeObjectURL(a.href);
+toast('Export Word généré.', 'ok');
 }
 function optimiserListeIA() {
-  var items = state.epicerie.items || [];
-  if (!items.length) { toast('Générez d’abord la liste.', 'err'); return; }
-  var btn = $('#btnOptimAI');
-  btn.disabled = true;
-  setStatus('#epicerieStatus', 'Optimisation de la liste par l’IA...', 'busy');
-  var L = [];
-  L.push('Épiceries accessibles : ' + (state.epicerie.magasins || []).join(', '));
-  L.push('Rabais de la semaine retenus :');
-  L.push(rabaisTexte());
-  L.push('');
-  L.push('Liste actuelle (JSON) :');
-  L.push(JSON.stringify(items.map(function (i) {
-    return { nom: i.nom, quantite: r1(i.qte), unite: i.unite, categorie: i.categorie, magasin: i.magasin, cout: r1(i.cout) };
-  })));
-  L.push('');
-  L.push('TACHE : nettoie et optimise cette liste d’épicerie.');
-  L.push('1. Fusionne les doublons et harmonise les unites (g, kg, ml, L, unite, paquet).');
-  L.push('2. Arrondis les quantites a des formats vendus en magasin.');
-  L.push('3. Attribue chaque article a l epicerie accessible la plus avantageuse (utilise les rabais).');
-  L.push('4. Corrige les categories pour suivre le parcours en magasin.');
-  L.push('5. Ajoute au maximum 5 articles de base indispensables oublies (huile, sel, epices) si necessaire.');
-  L.push('Categories permises : ' + CATEGORIES.join(' | '));
-  L.push('');
-  L.push('Reponds UNIQUEMENT avec ce JSON :');
-  L.push('{"note": "conseil court pour economiser", "items": [{"nom": "", "quantite": 0, "unite": "", "categorie": "", "magasin": "", "cout": 0, "enRabais": false}]}');
-  aiCall({
-    system: 'Tu optimises des listes d epicerie familiales. Tu reponds UNIQUEMENT avec un objet JSON valide, sans texte autour.',
-    prompt: L.join('\n'),
-    maxTokens: 8000
-  }).then(function (res) {
-    var data = extractJSON(res.content);
-    var arr = Array.isArray(data.items) ? data.items : [];
-    if (!arr.length) throw new Error('Réponse vide.');
-    var anciens = {};
-    items.forEach(function (i) { anciens[normal(i.nom)] = i; });
-    state.epicerie.items = arr.map(function (o) {
-      var vieux = anciens[normal(o.nom)];
-      return {
-        id: uid(), nom: String(o.nom || ''), qte: num(o.quantite), unite: String(o.unite || 'unite'),
-        categorie: CATEGORIES.indexOf(o.categorie) >= 0 ? o.categorie : 'Autre',
-        magasin: String(o.magasin || (state.epicerie.magasins || [])[0] || 'À déterminer'),
-        enRabais: !!o.enRabais, cout: num(o.cout), recettes: vieux ? vieux.recettes : [],
-        achete: vieux ? !!vieux.achete : false, manuel: false
-      };
-    });
-    state.epicerie.note = String(data.note || '');
-    save(); renderEpicerie();
-    setStatus('#epicerieStatus', 'Liste optimisée : ' + state.epicerie.items.length + ' articles.', 'ok');
-  }).catch(function (err) {
-    setStatus('#epicerieStatus', 'Erreur : ' + err.message, 'err');
-  }).then(function () { btn.disabled = false; });
+var items = state.epicerie.items || [];
+if (!items.length) { toast('Générez d’abord la liste.', 'err'); return; }
+var btn = $('#btnOptimAI');
+btn.disabled = true;
+setStatus('#epicerieStatus', 'Optimisation de la liste par l’IA...', 'busy');
+var L = [];
+L.push('Épiceries accessibles : ' + (state.epicerie.magasins || []).join(', '));
+L.push('Rabais de la semaine retenus :');
+L.push(rabaisTexte());
+L.push('');
+L.push('Liste actuelle (JSON) :');
+L.push(JSON.stringify(items.map(function (i) {
+return { nom: i.nom, quantite: r1(i.qte), unite: i.unite, categorie: i.categorie, magasin: i.magasin, cout: r1(i.cout) };
+})));
+L.push('');
+L.push('TACHE : nettoie et optimise cette liste d’épicerie.');
+L.push('1. Fusionne les doublons et harmonise les unites (g, kg, ml, L, unite, paquet).');
+L.push('2. Arrondis les quantites a des formats vendus en magasin.');
+L.push('3. Attribue chaque article a l epicerie accessible la plus avantageuse (utilise les rabais).');
+L.push('4. Corrige les categories pour suivre le parcours en magasin.');
+L.push('5. Ajoute au maximum 5 articles de base indispensables oublies (huile, sel, epices) si necessaire.');
+L.push('Categories permises : ' + CATEGORIES.join(' | '));
+L.push('');
+L.push('Reponds UNIQUEMENT avec ce JSON :');
+L.push('{"note": "conseil court pour economiser", "items": [{"nom": "", "quantite": 0, "unite": "", "categorie": "", "magasin": "", "cout": 0, "enRabais": false}]}');
+aiCall({
+system: 'Tu optimises des listes d epicerie familiales. Tu reponds UNIQUEMENT avec un objet JSON valide, sans texte autour.',
+prompt: L.join('\n'),
+maxTokens: 8000
+}).then(function (res) {
+var data = extractJSON(res.content);
+var arr = Array.isArray(data.items) ? data.items : [];
+if (!arr.length) throw new Error('Réponse vide.');
+var anciens = {};
+items.forEach(function (i) { anciens[normal(i.nom)] = i; });
+state.epicerie.items = arr.map(function (o) {
+var vieux = anciens[normal(o.nom)];
+return {
+id: uid(), nom: String(o.nom || ''), qte: num(o.quantite), unite: String(o.unite || 'unite'),
+categorie: CATEGORIES.indexOf(o.categorie) >= 0 ? o.categorie : 'Autre',
+magasin: String(o.magasin || (state.epicerie.magasins || [])[0] || 'À déterminer'),
+enRabais: !!o.enRabais, cout: num(o.cout), recettes: vieux ? vieux.recettes : [],
+achete: vieux ? !!vieux.achete : false, manuel: false
+};
+});
+state.epicerie.note = String(data.note || '');
+save(); renderEpicerie();
+setStatus('#epicerieStatus', 'Liste optimisée : ' + state.epicerie.items.length + ' articles.', 'ok');
+}).catch(function (err) {
+setStatus('#epicerieStatus', 'Erreur : ' + err.message, 'err');
+}).then(function () { btn.disabled = false; });
 }
 function bindEpicerie() {
-  function renderChipsMag() {
-    var tous = MAGASINS.slice();
-    (state.epicerie.magasins || []).forEach(function (m) { if (tous.indexOf(m) < 0) tous.push(m); });
-    $('#magasinsAcces').innerHTML = chipsHTML(tous, state.epicerie.magasins || [], 'data-val');
-  }
-  renderChipsMag();
-  $('#magasinsAcces').addEventListener('click', function (e) {
-    var chip = e.target.closest('.chip');
-    if (!chip) return;
-    var v = chip.getAttribute('data-val');
-    var k = state.epicerie.magasins.indexOf(v);
-    if (k >= 0) state.epicerie.magasins.splice(k, 1); else state.epicerie.magasins.push(v);
-    chip.classList.toggle('on');
-    save(); renderEpicerie();
-  });
-  $('#btnAddMagasin').addEventListener('click', function () {
-    var v = ($('#newMagasin').value || '').trim();
-    if (!v) return;
-    if (state.epicerie.magasins.indexOf(v) < 0) state.epicerie.magasins.push(v);
-    $('#newMagasin').value = '';
-    renderChipsMag(); save(); renderEpicerie();
-  });
-  $('#btnGenListe').addEventListener('click', générerListe);
-  $('#btnOptimAI').addEventListener('click', optimiserListeIA);
-  $('#btnAddArticle').addEventListener('click', function () {
-    var nom = prompt('Nom de l’article ?');
-    if (!nom) return;
-    var q = prompt('Quantité (ex. 500 g, 2 unités) ?', '1 unite') || '1 unite';
-    var parts = q.trim().split(' ');
-    state.epicerie.items.push({
-      id: uid(), nom: nom, qte: num(parts[0], 1), unite: parts[1] || 'unite',
-      categorie: 'Autre', magasin: (state.epicerie.magasins || [])[0] || 'À déterminer',
-      enRabais: false, cout: 0, recettes: [], achete: false, manuel: true
-    });
-    save(); renderEpicerie();
-  });
-  $('#btnResetChecks').addEventListener('click', function () {
-    (state.epicerie.items || []).forEach(function (i) { i.achete = false; });
-    save(); renderEpicerie();
-  });
-  $('#btnCopyListe').addEventListener('click', function () {
-    var txt = listeTexte();
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(txt).then(function () { toast('Liste copiée.', 'ok'); }, function () { toast('Copie impossible.', 'err'); });
-    } else {
-      var ta = document.createElement('textarea');
-      ta.value = txt; document.body.appendChild(ta); ta.select();
-      try { document.execCommand('copy'); toast('Liste copiée.', 'ok'); } catch (e) { toast('Copie impossible.', 'err'); }
-      document.body.removeChild(ta);
-    }
-  });
-  $('#btnExportListe').addEventListener('click', function () {
-    var blob = new Blob([listeTexte()], { type: 'text/plain;charset=utf-8' });
-    var a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'liste-epicerie-' + (state.rabais.semaine || todayISO()) + '.txt';
-    a.click();
-    URL.revokeObjectURL(a.href);
-  });
-  $('#btnPrint').addEventListener('click', function () { window.print(); });
-  $('#epicerieList').addEventListener('change', function (e) {
-    var el = e.target, i = el.getAttribute('data-ep'), f = el.getAttribute('data-f');
-    if (i === null || !f) return;
-    var it = state.epicerie.items[+i];
-    if (!it) return;
-    it[f] = el.type === 'checkbox' ? el.checked : el.value;
-    save(); renderEpicerie();
-  });
-  $('#epicerieList').addEventListener('click', function (e) {
-    var b = e.target.closest('button[data-dele]');
-    if (!b) return;
-    state.epicerie.items.splice(+b.getAttribute('data-dele'), 1);
-    save(); renderEpicerie();
-  });
+function renderChipsMag() {
+var tous = MAGASINS.slice();
+(state.epicerie.magasins || []).forEach(function (m) { if (tous.indexOf(m) < 0) tous.push(m); });
+$('#magasinsAcces').innerHTML = chipsHTML(tous, state.epicerie.magasins || [], 'data-val');
+}
+renderChipsMag();
+$('#magasinsAcces').addEventListener('click', function (e) {
+var chip = e.target.closest('.chip');
+if (!chip) return;
+var v = chip.getAttribute('data-val');
+var k = state.epicerie.magasins.indexOf(v);
+if (k >= 0) state.epicerie.magasins.splice(k, 1); else state.epicerie.magasins.push(v);
+chip.classList.toggle('on');
+save(); renderEpicerie();
+});
+$('#btnAddMagasin').addEventListener('click', function () {
+var v = ($('#newMagasin').value || '').trim();
+if (!v) return;
+if (state.epicerie.magasins.indexOf(v) < 0) state.epicerie.magasins.push(v);
+$('#newMagasin').value = '';
+renderChipsMag(); save(); renderEpicerie();
+});
+$('#btnGenListe').addEventListener('click', générerListe);
+$('#btnOptimAI').addEventListener('click', optimiserListeIA);
+$('#btnExportWord').addEventListener('click', exporterWordDoc);
+$('#btnAddArticle').addEventListener('click', function () {
+var nom = prompt('Nom de l’article ?');
+if (!nom) return;
+var q = prompt('Quantité (ex. 500 g, 2 unités) ?', '1 unite') || '1 unite';
+var parts = q.trim().split(' ');
+state.epicerie.items.push({
+id: uid(), nom: nom, qte: num(parts[0], 1), unite: parts[1] || 'unite',
+categorie: 'Autre', magasin: (state.epicerie.magasins || [])[0] || 'À déterminer',
+enRabais: false, cout: 0, recettes: [], achete: false, manuel: true
+});
+save(); renderEpicerie();
+});
+$('#btnResetChecks').addEventListener('click', function () {
+(state.epicerie.items || []).forEach(function (i) { i.achete = false; });
+save(); renderEpicerie();
+});
+$('#btnCopyListe').addEventListener('click', function () {
+var txt = listeTexte();
+if (navigator.clipboard && navigator.clipboard.writeText) {
+navigator.clipboard.writeText(txt).then(function () { toast('Liste copiée.', 'ok'); }, function () { toast('Copie impossible.', 'err'); });
+} else {
+var ta = document.createElement('textarea');
+ta.value = txt; document.body.appendChild(ta); ta.select();
+try { document.execCommand('copy'); toast('Liste copiée.', 'ok'); } catch (e) { toast('Copie impossible.', 'err'); }
+document.body.removeChild(ta);
+}
+});
+$('#btnExportListe').addEventListener('click', function () {
+var blob = new Blob([listeTexte()], { type: 'text/plain;charset=utf-8' });
+var a = document.createElement('a');
+a.href = URL.createObjectURL(blob);
+a.download = 'liste-epicerie-' + (state.rabais.semaine || todayISO()) + '.txt';
+a.click();
+URL.revokeObjectURL(a.href);
+});
+$('#btnPrint').addEventListener('click', function () { window.print(); });
+$('#epicerieList').addEventListener('change', function (e) {
+var el = e.target, i = el.getAttribute('data-ep'), f = el.getAttribute('data-f');
+if (i === null || !f) return;
+var it = state.epicerie.items[+i];
+if (!it) return;
+it[f] = el.type === 'checkbox' ? el.checked : el.value;
+save(); renderEpicerie();
+});
+$('#epicerieList').addEventListener('click', function (e) {
+var b = e.target.closest('button[data-dele]');
+if (!b) return;
+state.epicerie.items.splice(+b.getAttribute('data-dele'), 1);
+save(); renderEpicerie();
+});
+}
+
+/* ======================= PAGE 5 : RECHERCHE PRODUIT ======================= */
+function promptRecherche(produit, locaux) {
+var L = [];
+L.push('Ville: ' + (state.rabais.ville || 'non precisee'));
+L.push('Province ou region: ' + (state.rabais.province || 'QC'));
+L.push('Semaine du: ' + dateFr(state.rabais.semaine || todayISO()));
+L.push('Magasins a comparer: ' + (state.rabais.magasins || []).join(', '));
+L.push('');
+if (locaux && locaux.length) {
+L.push('Rabais deja releves cette semaine qui correspondent peut-etre a ce produit :');
+locaux.forEach(function (it) {
+L.push('- ' + it.produit + ' | ' + (it.magasin || '') + ' | ' + money(it.prix) + (it.unite ? ' ' + it.unite : ''));
+});
+L.push('');
+}
+L.push('PRODUIT RECHERCHE : "' + produit + '"');
+L.push('');
+L.push('TACHE : trouve, pour ce produit precis, le prix le plus bas disponible cette semaine parmi les magasins listes ci-dessus, dans cette ville/region.');
+L.push('Utilise la recherche web pour consulter les circulaires en ligne actuelles des detaillants.');
+L.push('Retourne toutes les options trouvees (au moins celles des magasins listes si possible), triees du moins cher au plus cher.');
+L.push('Si aucun rabais special n existe pour un magasin, indique le prix regulier estime si tu le connais, sinon omets ce magasin.');
+L.push('');
+L.push('Reponds UNIQUEMENT avec ce JSON :');
+L.push('{');
+L.push(' "note": "avertissement court sur la fiabilite des prix",');
+L.push(' "resultats": [');
+L.push(' {"magasin": "", "produit": "", "prix": 0, "format": "", "prixRegulier": 0, "enRabais": false, "note": ""}');
+L.push(' ]');
+L.push('}');
+return L.join('\n');
+}
+function renderRecherche() {
+$('#rechProduit').value = state.recherche.produit || '';
+var res = (state.recherche.resultats || []).slice().sort(function (a, b) { return num(a.prix) - num(b.prix); });
+var box = $('#rechResultats');
+if (!res.length) {
+box.innerHTML = '<p class="mut">Écrivez un produit ci-dessus et cliquez sur <b>Trouver le moins cher</b>.</p>';
+} else {
+var rows = res.map(function (it, idx) {
+return '<tr>' +
+(idx === 0 ? '<td><span class="badge deal">Moins cher</span></td>' : '<td></td>') +
+'<td>' + esc(it.magasin || '-') + '</td>' +
+'<td>' + esc(it.produit || state.recherche.produit) + '</td>' +
+'<td>' + money(it.prix) + '</td>' +
+'<td>' + esc(it.format || '') + '</td>' +
+'<td>' + (num(it.prixRegulier) > num(it.prix) ? money(it.prixRegulier) : '-') + '</td>' +
+'<td>' + esc(it.note || '') + '</td>' +
+'</tr>';
+}).join('');
+box.innerHTML = (state.recherche.note ? '<p class="mut small">' + esc(state.recherche.note) + '</p>' : '') +
+'<div class="tbwrap"><table><thead><tr><th></th><th>Magasin</th><th>Produit</th><th>Prix</th><th>Format</th><th>Régulier</th><th>Note</th></tr></thead><tbody>' + rows + '</tbody></table></div>';
+}
+var srcBox = $('#rechSources');
+var srcs = state.recherche.sources || [];
+if (srcs.length) {
+srcBox.classList.remove('hidden');
+srcBox.innerHTML = '<div class="lab">Sources consultées par l’IA</div><ul class="small mut">' +
+srcs.map(function (s) { return '<li><a href="' + esc(s.url) + '" target="_blank" rel="noopener">' + esc(s.title) + '</a></li>'; }).join('') + '</ul>';
+} else {
+srcBox.classList.add('hidden');
+srcBox.innerHTML = '';
+}
+}
+function genRecherche() {
+var q = ($('#rechProduit').value || '').trim();
+if (!q) { toast('Écrivez un produit à rechercher.', 'err'); $('#rechProduit').focus(); return; }
+if (!state.rabais.ville) { toast('Indiquez votre ville à la page « Rabais de la semaine » avant de rechercher.', 'err'); return; }
+state.recherche.produit = q; save();
+var local = (state.rabais.items || []).filter(function (it) {
+var n = normal(it.produit);
+var nq = normal(q);
+return n && (n.indexOf(nq) >= 0 || nq.indexOf(n) >= 0);
+});
+var btn = $('#btnRechProduit');
+btn.disabled = true;
+setStatus('#rechStatus', 'Recherche de « ' + q + ' » dans les circulaires de la semaine...', 'busy');
+aiCall({
+system: 'Tu es un assistant qui aide une famille a trouver le prix le plus bas pour un produit alimentaire precis, cette semaine, dans les circulaires des magasins choisis au Quebec/Canada. Tu reponds UNIQUEMENT avec un objet JSON valide, sans texte avant ni apres, sans bloc de code markdown.',
+prompt: promptRecherche(q, local),
+webSearch: true,
+maxSearches: 6,
+maxTokens: 3000,
+userLocation: { type: 'approximate', city: state.rabais.ville, region: state.rabais.province || 'Quebec', country: 'CA', timezone: 'America/Toronto' }
+}).then(function (res) {
+var data = extractJSON(res.content);
+var arr = Array.isArray(data.resultats) ? data.resultats : [];
+state.recherche.resultats = arr;
+state.recherche.note = String(data.note || '');
+state.recherche.sources = res.sources || [];
+state.recherche.generatedAt = new Date().toISOString();
+save(); renderRecherche();
+setStatus('#rechStatus', arr.length ? (arr.length + ' résultat(s) trouvé(s).') : 'Aucun résultat trouvé.', arr.length ? 'ok' : 'err');
+}).catch(function (err) {
+setStatus('#rechStatus', 'Erreur : ' + err.message, 'err');
+}).then(function () { btn.disabled = false; });
+}
+function bindRecherche() {
+$('#btnRechProduit').addEventListener('click', genRecherche);
+$('#rechProduit').addEventListener('keydown', function (e) { if (e.key === 'Enter') genRecherche(); });
 }
 
 /* ======================= REGLAGES, ONGLETS, INIT ======================= */
 function majEtatIA() {
-  var p = $('#aiState');
-  var ok = !!(state.settings.apiKey || '').trim();
-  p.className = 'pill' + (ok ? ' ok' : '');
-  p.textContent = ok ? 'IA prête' : 'IA non configurée';
+var p = $('#aiState');
+var ok = !!(state.settings.apiKey || '').trim();
+p.className = 'pill' + (ok ? ' ok' : '');
+p.textContent = ok ? 'IA prête' : 'IA non configurée';
 }
 function bindSettings() {
-  $('#btnSettings').addEventListener('click', function () {
-    $('#apiKey').value = state.settings.apiKey || '';
-    $('#model').value = state.settings.model || MODEL_DEFAUT;
-    $('#optWebSearch').checked = !!state.settings.webSearch;
-    $('#modalSettings').classList.add('open');
-  });
-  $('#btnCloseSettings').addEventListener('click', function () { $('#modalSettings').classList.remove('open'); });
-  $('#modalSettings').addEventListener('click', function (e) { if (e.target === this) this.classList.remove('open'); });
-  $('#btnSaveSettings').addEventListener('click', function () {
-    state.settings.apiKey = $('#apiKey').value.trim();
-    state.settings.model = ($('#model').value || '').trim() || MODEL_DEFAUT;
-    state.settings.webSearch = $('#optWebSearch').checked;
-    save(); majEtatIA();
-    $('#modalSettings').classList.remove('open');
-    toast('Réglages enregistrés.', 'ok');
-  });
-  $('#btnExportData').addEventListener('click', function () {
-    var copie = JSON.parse(JSON.stringify(state));
-    copie.settings.apiKey = '';
-    var blob = new Blob([JSON.stringify(copie, null, 2)], { type: 'application/json' });
-    var a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'famille-nutrition-' + todayISO() + '.json';
-    a.click();
-    URL.revokeObjectURL(a.href);
-  });
-  $('#btnImportData').addEventListener('click', function () { $('#fileImport').click(); });
-  $('#fileImport').addEventListener('change', function () {
-    var f = this.files && this.files[0];
-    if (!f) return;
-    var fr = new FileReader();
-    fr.onload = function () {
-      try {
-        var d = JSON.parse(fr.result);
-        if (Array.isArray(d.membres)) state.membres = d.membres;
-        if (d.rabais) state.rabais = d.rabais;
-        if (d.recettes) state.recettes = d.recettes;
-        if (d.epicerie) state.epicerie = d.epicerie;
-        save(); renderTout();
-        toast('Données importées.', 'ok');
-      } catch (e) { toast('Fichier invalide.', 'err'); }
-    };
-    fr.readAsText(f);
-  });
-  $('#btnResetAll').addEventListener('click', function () {
-    if (!confirm('Effacer toutes les données de l’application dans ce navigateur ?')) return;
-    try { localStorage.removeItem(LS); } catch (e) {}
-    location.reload();
-  });
+$('#btnSettings').addEventListener('click', function () {
+$('#apiKey').value = state.settings.apiKey || '';
+$('#model').value = state.settings.model || MODEL_DEFAUT;
+$('#optWebSearch').checked = !!state.settings.webSearch;
+$('#modalSettings').classList.add('open');
+});
+$('#btnCloseSettings').addEventListener('click', function () { $('#modalSettings').classList.remove('open'); });
+$('#modalSettings').addEventListener('click', function (e) { if (e.target === this) this.classList.remove('open'); });
+$('#btnSaveSettings').addEventListener('click', function () {
+state.settings.apiKey = $('#apiKey').value.trim();
+state.settings.model = ($('#model').value || '').trim() || MODEL_DEFAUT;
+state.settings.webSearch = $('#optWebSearch').checked;
+save(); majEtatIA();
+$('#modalSettings').classList.remove('open');
+toast('Réglages enregistrés.', 'ok');
+});
+$('#btnExportData').addEventListener('click', function () {
+var copie = JSON.parse(JSON.stringify(state));
+copie.settings.apiKey = '';
+var blob = new Blob([JSON.stringify(copie, null, 2)], { type: 'application/json' });
+var a = document.createElement('a');
+a.href = URL.createObjectURL(blob);
+a.download = 'famille-nutrition-' + todayISO() + '.json';
+a.click();
+URL.revokeObjectURL(a.href);
+});
+$('#btnImportData').addEventListener('click', function () { $('#fileImport').click(); });
+$('#fileImport').addEventListener('change', function () {
+var f = this.files && this.files[0];
+if (!f) return;
+var fr = new FileReader();
+fr.onload = function () {
+try {
+var d = JSON.parse(fr.result);
+if (Array.isArray(d.membres)) state.membres = d.membres;
+if (d.rabais) state.rabais = d.rabais;
+if (d.recettes) state.recettes = d.recettes;
+if (d.epicerie) state.epicerie = d.epicerie;
+if (d.recherche) state.recherche = d.recherche;
+save(); renderTout();
+toast('Données importées.', 'ok');
+} catch (e) { toast('Fichier invalide.', 'err'); }
+};
+fr.readAsText(f);
+});
+$('#btnResetAll').addEventListener('click', function () {
+if (!confirm('Effacer toutes les données de l’application dans ce navigateur ?')) return;
+try { localStorage.removeItem(LS); } catch (e) {}
+location.reload();
+});
 }
 function showPage(name) {
-  state.page = name;
-  $$('.page').forEach(function (p) { p.classList.remove('active'); });
-  var el = $('#page-' + name);
-  if (el) el.classList.add('active');
-  $$('.tab').forEach(function (t) { t.classList.toggle('active', t.getAttribute('data-page') === name); });
-  window.scrollTo(0, 0);
-  save();
+state.page = name;
+$$('.page').forEach(function (p) { p.classList.remove('active'); });
+var el = $('#page-' + name);
+if (el) el.classList.add('active');
+$$('.tab').forEach(function (t) { t.classList.toggle('active', t.getAttribute('data-page') === name); });
+window.scrollTo(0, 0);
+save();
 }
 function bindTabs() {
-  $('#tabs').addEventListener('click', function (e) {
-    var t = e.target.closest('.tab');
-    if (!t) return;
-    showPage(t.getAttribute('data-page'));
-  });
+$('#tabs').addEventListener('click', function (e) {
+var t = e.target.closest('.tab');
+if (!t) return;
+showPage(t.getAttribute('data-page'));
+});
 }
 function renderTout() {
-  renderFamille();
-  renderRabais();
-  renderRecettes();
-  renderEpicerie();
-  majEtatIA();
+renderFamille();
+renderRabais();
+renderRecettes();
+renderEpicerie();
+renderRecherche();
+majEtatIA();
 }
 function init() {
-  load();
-  bindFamille();
-  bindRabais();
-  bindRecettes();
-  bindEpicerie();
-  bindSettings();
-  bindTabs();
-  if (!state.membres.length) state.membres.push(membreVide());
-  showPage(state.page || 'famille');
-  renderTout();
+load();
+bindFamille();
+bindRabais();
+bindRecettes();
+bindEpicerie();
+bindRecherche();
+bindSettings();
+bindTabs();
+if (!state.membres.length) state.membres.push(membreVide());
+showPage(state.page || 'famille');
+renderTout();
 }
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
 else init();
