@@ -1526,6 +1526,7 @@ if (!res.length) {
 box.innerHTML = '<p class="mut">Écrivez un produit ci-dessus et cliquez sur <b>Trouver le moins cher</b>.</p>';
 } else {
 var rows = res.map(function (it, idx) {
+var oi = state.recherche.resultats.indexOf(it);
 return '<tr>' +
 (idx === 0 ? '<td><span class="badge deal">Moins cher</span></td>' : '<td></td>') +
 '<td>' + esc(it.magasin || '-') + '</td>' +
@@ -1534,10 +1535,11 @@ return '<tr>' +
 '<td>' + esc(it.format || '') + '</td>' +
 '<td>' + (num(it.prixRegulier) > num(it.prix) ? money(it.prixRegulier) : '-') + '</td>' +
 '<td>' + esc(it.note || '') + '</td>' +
+'<td><button class="btn ghost mini" data-addrech="' + oi + '">+ Ajouter</button></td>' +
 '</tr>';
 }).join('');
 box.innerHTML = (state.recherche.note ? '<p class="mut small">' + esc(state.recherche.note) + '</p>' : '') +
-'<div class="tbwrap"><table><thead><tr><th></th><th>Magasin</th><th>Produit</th><th>Prix</th><th>Format</th><th>Régulier</th><th>Note</th></tr></thead><tbody>' + rows + '</tbody></table></div>';
+'<div class="tbwrap"><table><thead><tr><th></th><th>Magasin</th><th>Produit</th><th>Prix</th><th>Format</th><th>Régulier</th><th>Note</th><th></th></tr></thead><tbody>' + rows + '</tbody></table></div>';
 }
 var srcBox = $('#rechSources');
 var srcs = state.recherche.sources || [];
@@ -1583,9 +1585,32 @@ setStatus('#rechStatus', arr.length ? (arr.length + ' résultat(s) trouvé(s).')
 setStatus('#rechStatus', 'Erreur : ' + err.message, 'err');
 }).then(function () { btn.disabled = false; });
 }
+function ajouterRechercheAListe(idx) {
+var it = (state.recherche.resultats || [])[idx];
+if (!it) { toast('Article introuvable.', 'err'); return; }
+var qte = 1, unite = 'unite';
+if (it.format) {
+var parts = String(it.format).trim().split(' ');
+var q0 = parseFloat(String(parts[0]).replace(',', '.'));
+if (parts.length && isFinite(q0)) { qte = q0; unite = parts.slice(1).join(' ') || 'unite'; }
+else { unite = it.format; }
+}
+state.epicerie.items.push({
+id: uid(), nom: it.produit || state.recherche.produit || 'Produit', qte: qte, unite: unite,
+categorie: 'Autre', magasin: it.magasin || (state.epicerie.magasins || [])[0] || 'À déterminer',
+enRabais: !!it.enRabais, cout: num(it.prix), recettes: [], achete: false, manuel: true
+});
+save(); renderEpicerie();
+toast('« ' + (it.produit || state.recherche.produit) + ' » ajouté à la liste d’épicerie.', 'ok');
+}
 function bindRecherche() {
 $('#btnRechProduit').addEventListener('click', genRecherche);
 $('#rechProduit').addEventListener('keydown', function (e) { if (e.key === 'Enter') genRecherche(); });
+$('#rechResultats').addEventListener('click', function (e) {
+var b = e.target.closest('button[data-addrech]');
+if (!b) return;
+ajouterRechercheAListe(+b.getAttribute('data-addrech'));
+});
 }
 
 /* ======================= REGLAGES, ONGLETS, INIT ======================= */
