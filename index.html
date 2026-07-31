@@ -36,9 +36,9 @@ main{max-width:1180px;margin:0 auto;padding:20px 16px 70px}
 .pagehead{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:14px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:var(--rad);padding:16px;margin-bottom:14px}
 .card.sub{background:var(--card2)}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px}
 .grid2{display:grid;grid-template-columns:repeat(auto-fill,minmax(420px,1fr));gap:14px}
-.formgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px}
+.formgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:10px}
 label{display:block;font-size:12.5px;color:var(--mut);font-weight:600}
 input,select,textarea{width:100%;margin-top:4px;padding:9px 10px;border-radius:9px;border:1px solid var(--line);background:#0f1a16;color:var(--txt);font-family:inherit;font-size:14px}
 input:focus,select:focus,textarea:focus{outline:none;border-color:var(--acc2)}
@@ -119,12 +119,12 @@ footer{text-align:center;color:var(--mut);font-size:12px;padding:18px}
     <div class="logo">FN</div>
     <div>
       <h1>Famille Nutrition IA</h1>
-      <p>Macros, rabais de circulaires, recettes et epicerie automatises</p>
+      <p>Macros, rabais de circulaires, recettes et épicerie automatisés</p>
     </div>
   </div>
   <div class="hactions">
-    <span class="pill" id="aiState">IA non configuree</span>
-    <button class="btn ghost" id="btnSettings">Reglages</button>
+    <span class="pill" id="aiState">IA non configurée</span>
+    <button class="btn ghost" id="btnSettings">Réglages</button>
   </div>
 </header>
 
@@ -132,7 +132,7 @@ footer{text-align:center;color:var(--mut);font-size:12px;padding:18px}
   <button class="tab active" data-page="famille"><b>1</b> Famille <span>&amp; macros</span></button>
   <button class="tab" data-page="rabais"><b>2</b> Rabais <span>de la semaine</span></button>
   <button class="tab" data-page="recettes"><b>3</b> Recettes <span>IA</span></button>
-  <button class="tab" data-page="epicerie"><b>4</b> Liste <span>d'epicerie</span></button>
+  <button class="tab" data-page="epicerie"><b>4</b> Liste <span>d'épicerie</span></button>
 </nav>
 
 <main>
@@ -141,7 +141,7 @@ footer{text-align:center;color:var(--mut);font-size:12px;padding:18px}
   <div class="pagehead">
     <div>
       <h2>1. La famille</h2>
-      <p class="mut">Une fiche par personne : age, calories quotidiennes, repartition des macronutriments et restrictions alimentaires. Ces donnees servent ensuite aux recettes et aux quantites.</p>
+      <p class="mut">Une fiche par personne : âge, calories quotidiennes, répartition des macronutriments et restrictions alimentaires. Ces données servent ensuite aux recettes et aux quantités.</p>
     </div>
     <div class="row wrap">
       <button class="btn" id="btnAddMembre">+ Ajouter une personne</button>
@@ -163,7 +163,7 @@ footer{text-align:center;color:var(--mut);font-size:12px;padding:18px}
       <label>Ville actuelle
         <input id="ville" list="villes" placeholder="Ex. : Sherbrooke">
       </label>
-      <label>Province / region
+      <label>Province / région
         <input id="province" placeholder="QC" value="QC">
       </label>
       <label>Code postal (optionnel)
@@ -174,10 +174,10 @@ footer{text-align:center;color:var(--mut);font-size:12px;padding:18px}
       </label>
     </div>
     <datalist id="villes"></datalist>
-    <div class="lab">Magasins a analyser</div>
+    <div class="lab">Magasins à analyser</div>
     <div class="chips" id="magasinsRabais"></div>
     <div class="row wrap mt">
-      <button class="btn" id="btnGenRabais">Generer les rabais avec l'IA</button>
+      <button class="btn" id="btnGenRabais">Générer les rabais avec l'IA</button>
       <button class="btn ghost" id="btnPasteCirc">Coller une circulaire</button>
       <button class="btn ghost" id="btnAddRabais">+ Item manuel</button>
       <button class="btn ghost danger" id="btnClearRabais">Vider la liste</button>
@@ -200,8 +200,8 @@ footer{text-align:center;color:var(--mut);font-size:12px;padding:18px}
 <section class="page" id="page-recettes">
   <div class="pagehead">
     <div>
-      <h2>3. Recettes proposees</h2>
-      <p class="mut">L'IA combine les rabais coches et les profils de la famille pour proposer des recettes economiques qui respectent les calories, les macros et les restrictions.</p>
+      <h2>3. Recettes proposées</h2>
+      <p class="mut">L'IA combine les rabais cochés et les profils de la famille pour proposer des recettes économiques qui respectent les calories, les macros et les restrictions.</p>
     </div>
   </div>
   <div class="card">
@@ -219,12 +219,12 @@ footer{text-align:center;color:var(--mut);font-size:12px;padding:18px}
         <input id="rStyle" placeholder="familial, quebecois, italien...">
       </label>
     </div>
-    <div class="lab">Repas a generer</div>
+    <div class="lab">Repas à générer</div>
     <div class="chips" id="rRepas"></div>
-    <label class="check"><input type="checkbox" id="rOnlyDeals" checked> Maximiser l'utilisation des items en rabais coches</label>
-    <label class="check"><input type="checkbox" id="rRestes"> Prevoir des portions supplementaires (restes pour les lunchs)</label>
+    <label class="check"><input type="checkbox" id="rOnlyDeals" checked> Maximiser l'utilisation des items en rabais cochés</label>
+    <label class="check"><input type="checkbox" id="rRestes"> Prévoir des portions supplémentaires (restes pour les lunchs)</label>
     <div class="row wrap mt">
-      <button class="btn" id="btnGenRecettes">Generer les recettes avec l'IA</button>
+      <button class="btn" id="btnGenRecettes">Générer les recettes avec l'IA</button>
       <button class="btn ghost" id="btnSelectAllRec">Tout choisir</button>
       <button class="btn ghost danger" id="btnClearRecettes">Vider</button>
     </div>
@@ -237,25 +237,25 @@ footer{text-align:center;color:var(--mut);font-size:12px;padding:18px}
 <section class="page" id="page-epicerie">
   <div class="pagehead">
     <div>
-      <h2>4. Liste d'epicerie</h2>
-      <p class="mut">Generee automatiquement a partir des recettes choisies, regroupee par epicerie accessible et par rayon.</p>
+      <h2>4. Liste d'épicerie</h2>
+      <p class="mut">Générée automatiquement à partir des recettes choisies, regroupée par épicerie accessible et par rayon.</p>
     </div>
   </div>
   <div class="card">
-    <div class="lab">Epiceries accessibles</div>
+    <div class="lab">Épiceries accessibles</div>
     <div class="chips" id="magasinsAcces"></div>
     <div class="row wrap">
-      <input id="newMagasin" placeholder="Ajouter une epicerie..." style="max-width:240px">
+      <input id="newMagasin" placeholder="Ajouter une épicerie..." style="max-width:240px">
       <button class="btn ghost mini" id="btnAddMagasin">+ Ajouter</button>
     </div>
     <div class="row wrap mt">
-      <button class="btn" id="btnGenListe">Generer la liste</button>
+      <button class="btn" id="btnGenListe">Générer la liste</button>
       <button class="btn ghost" id="btnOptimAI">Optimiser avec l'IA</button>
       <button class="btn ghost" id="btnAddArticle">+ Article</button>
       <button class="btn ghost" id="btnCopyListe">Copier</button>
       <button class="btn ghost" id="btnExportListe">Exporter .txt</button>
       <button class="btn ghost" id="btnPrint">Imprimer</button>
-      <button class="btn ghost danger" id="btnResetChecks">Tout decocher</button>
+      <button class="btn ghost danger" id="btnResetChecks">Tout décocher</button>
     </div>
     <div class="status" id="epicerieStatus"></div>
   </div>
@@ -265,25 +265,25 @@ footer{text-align:center;color:var(--mut);font-size:12px;padding:18px}
 
 </main>
 
-<footer>Famille Nutrition IA &middot; donnees conservees dans ce navigateur &middot; les prix des circulaires doivent toujours etre verifies en magasin</footer>
+<footer>Famille Nutrition IA &middot; données conservées dans ce navigateur &middot; les prix des circulaires doivent toujours être vérifiés en magasin</footer>
 
 <div class="modal" id="modalSettings">
   <div class="modalbox">
-    <h3>Reglages</h3>
-    <p class="mut small">Votre cle API Anthropic reste dans ce navigateur (localStorage) et n'est utilisee que pour vos propres requetes.</p>
-    <label>Cle API Anthropic
+    <h3>Réglages</h3>
+    <p class="mut small">Votre clé API Anthropic reste dans ce navigateur (localStorage) et n'est utilisée que pour vos propres requêtes.</p>
+    <label>Clé API Anthropic
       <input type="password" id="apiKey" placeholder="sk-ant-..." autocomplete="off">
     </label>
-    <label>Modele
+    <label>Modèle
       <input id="model" placeholder="claude-sonnet-5">
     </label>
-    <label class="check"><input type="checkbox" id="optWebSearch" checked> Autoriser la recherche web (circulaires reelles de la semaine)</label>
-    <div class="lab">Mes donnees</div>
+    <label class="check"><input type="checkbox" id="optWebSearch" checked> Autoriser la recherche web (circulaires réelles de la semaine)</label>
+    <div class="lab">Mes données</div>
     <div class="row wrap">
       <button class="btn ghost mini" id="btnExportData">Exporter (.json)</button>
       <button class="btn ghost mini" id="btnImportData">Importer</button>
       <input type="file" id="fileImport" class="hidden" accept="application/json">
-      <button class="btn ghost mini danger" id="btnResetAll">Reinitialiser</button>
+      <button class="btn ghost mini danger" id="btnResetAll">Réinitialiser</button>
     </div>
     <div class="row end mt">
       <button class="btn ghost" id="btnCloseSettings">Fermer</button>
@@ -793,7 +793,7 @@ function promptRabais(texteCirculaire) {
 }
 function appliquerRabais(data, sources) {
   var arr = Array.isArray(data.rabais) ? data.rabais : [];
-  if (!arr.length) throw new Error('Aucun rabais retourne par l IA.');
+  if (!arr.length) throw new Error('Aucun rabais retourné par l’IA.');
   state.rabais.items = arr.map(function (o) {
     return {
       id: uid(),
@@ -815,11 +815,11 @@ function appliquerRabais(data, sources) {
   save(); renderRabais();
 }
 function genRabais() {
-  if (!state.rabais.ville) { toast('Indiquez votre ville avant de generer les rabais.', 'err'); $('#ville').focus(); return; }
+  if (!state.rabais.ville) { toast('Indiquez votre ville avant de générer les rabais.', 'err'); $('#ville').focus(); return; }
   if (!(state.rabais.magasins || []).length) { toast('Choisissez au moins un magasin.', 'err'); return; }
   var btn = $('#btnGenRabais');
   btn.disabled = true;
-  setStatus('#rabaisStatus', 'Analyse des circulaires de la semaine pour ' + state.rabais.ville + '... (30 a 90 secondes)', 'busy');
+  setStatus('#rabaisStatus', 'Analyse des circulaires de la semaine pour ' + state.rabais.ville + '... (30 à 90 secondes)', 'busy');
   aiCall({
     system: 'Tu es un specialiste des circulaires d epicerie au Quebec et au Canada. Tu connais les prix courants et les formats des detaillants. Tu reponds UNIQUEMENT avec un objet JSON valide, sans texte avant ni apres, sans bloc de code markdown.',
     prompt: promptRabais(null),
@@ -829,17 +829,17 @@ function genRabais() {
     userLocation: { type: 'approximate', city: state.rabais.ville, region: state.rabais.province || 'Quebec', country: 'CA', timezone: 'America/Toronto' }
   }).then(function (res) {
     appliquerRabais(extractJSON(res.content), res.sources);
-    setStatus('#rabaisStatus', state.rabais.items.length + ' aubaines trouvees. Verifiez les prix en magasin et decochez ce qui ne vous interesse pas.', 'ok');
+    setStatus('#rabaisStatus', state.rabais.items.length + ' aubaines trouvées. Vérifiez les prix en magasin et décochez ce qui ne vous intéresse pas.', 'ok');
   }).catch(function (err) {
     setStatus('#rabaisStatus', 'Erreur : ' + err.message, 'err');
   }).then(function () { btn.disabled = false; });
 }
 function parseCirculaire() {
   var txt = ($('#circText').value || '').trim();
-  if (txt.length < 20) { toast('Collez d abord le texte d une circulaire.', 'err'); return; }
+  if (txt.length < 20) { toast('Collez d’abord le texte d’une circulaire.', 'err'); return; }
   var btn = $('#btnParseCirc');
   btn.disabled = true;
-  setStatus('#rabaisStatus', 'Extraction des rabais du texte colle...', 'busy');
+  setStatus('#rabaisStatus', 'Extraction des rabais du texte collé...', 'busy');
   aiCall({
     system: 'Tu extrais des donnees structurees de circulaires d epicerie. Tu reponds UNIQUEMENT avec un objet JSON valide, sans texte autour.',
     prompt: promptRabais(txt),
@@ -893,7 +893,7 @@ function promptRecettes() {
   L.push('- Budget cible pour la periode: ' + money(p.budget));
   if (p.style) L.push('- Style de cuisine souhaite: ' + p.style);
   L.push('- ' + (p.onlyDeals ? 'Maximiser l utilisation des items en rabais (economie maximale).' : 'Les rabais sont un atout mais pas une obligation.'));
-  if (p.restes) L.push('- Prevoir des portions supplementaires pour les lunchs (restes).');
+  if (p.restes) L.push('- Prévoir des portions supplémentaires pour les lunchs (restes).');
   L.push('');
   L.push('TACHE : propose ' + nb + ' recettes differentes, economiques, realistes et equilibrees.');
   L.push('Regles importantes :');
@@ -947,18 +947,18 @@ function recetteCardHTML(r, i) {
       '<span><span class="dot" style="background:#ffc061"></span><em>' + r0(m.lipides) + ' g</em> lip.</span>' +
     '</div>' +
     ((r.respecte || []).length ? '<div class="chips">' + (r.respecte || []).map(function (x) { return '<span class="badge deal">' + esc(x) + '</span>'; }).join('') + '</div>' : '') +
-    '<div class="row wrap"><label style="flex:1 1 120px;margin:0">Portions a preparer<input type="number" min="1" max="30" data-rec="' + i + '" data-f="portionsVoulues" value="' + num(r.portionsVoulues || r.portions || 4) + '"></label></div>' +
-    '<details class="rdet"><summary>Voir les ingredients et la preparation</summary>' +
-      '<div class="lab">Ingredients</div><ul>' +
+    '<div class="row wrap"><label style="flex:1 1 120px;margin:0">Portions à préparer<input type="number" min="1" max="30" data-rec="' + i + '" data-f="portionsVoulues" value="' + num(r.portionsVoulues || r.portions || 4) + '"></label></div>' +
+    '<details class="rdet"><summary>Voir les ingrédients et la préparation</summary>' +
+      '<div class="lab">Ingrédients</div><ul>' +
       (r.ingredients || []).map(function (g) {
         return '<li>' + esc(g.nom) + ' - <b>' + r1(g.quantite) + ' ' + esc(g.unite || '') + '</b>' +
           (g.magasin ? ' <span class="mut">(' + esc(g.magasin) + ')</span>' : '') +
           (g.enRabais ? ' <span class="badge deal">rabais</span>' : '') +
           (num(g.cout) ? ' <span class="mut">' + money(g.cout) + '</span>' : '') + '</li>';
       }).join('') + '</ul>' +
-      '<div class="lab">Preparation</div><ol>' +
+      '<div class="lab">Préparation</div><ol>' +
       (r.etapes || []).map(function (e) { return '<li>' + esc(e) + '</li>'; }).join('') + '</ol>' +
-      ((r.parPersonne || []).length ? '<div class="lab">Repartition par personne</div><ul>' +
+      ((r.parPersonne || []).length ? '<div class="lab">Répartition par personne</div><ul>' +
         (r.parPersonne || []).map(function (pp) { return '<li>' + esc(pp.nom) + ' : ' + r1(pp.portions) + ' portion(s)' + (num(pp.calories) ? ' - ' + r0(pp.calories) + ' kcal' : '') + '</li>'; }).join('') + '</ul>' : '') +
       (r.notes ? '<p class="mut small mt">' + esc(r.notes) + '</p>' : '') +
     '</details>' +
@@ -968,7 +968,7 @@ function renderRecettes() {
   var items = state.recettes.items || [];
   var box = $('#recettesList');
   box.innerHTML = items.length ? items.map(recetteCardHTML).join('') :
-    '<div class="card"><p class="mut">Aucune recette pour le moment. Remplissez la page 1, generez les rabais a la page 2, puis cliquez sur <b>Generer les recettes avec l\'IA</b>.</p></div>';
+    '<div class="card"><p class="mut">Aucune recette pour le moment. Remplissez la page 1, générez les rabais à la page 2, puis cliquez sur <b>Générer les recettes avec l\'IA</b>.</p></div>';
   var choisies = items.filter(function (r) { return r.choisie; });
   var cout = 0, eco = 0, kcal = 0;
   choisies.forEach(function (r) {
@@ -979,10 +979,10 @@ function renderRecettes() {
   });
   var budget = num(state.recettes.params.budget);
   $('#recettesResume').innerHTML = '<div class="kpis">' +
-    '<div class="kpi"><span>Recettes proposees</span><b>' + items.length + '</b></div>' +
+    '<div class="kpi"><span>Recettes proposées</span><b>' + items.length + '</b></div>' +
     '<div class="kpi"><span>Choisies</span><b>' + choisies.length + '</b></div>' +
-    '<div class="kpi"><span>Cout des choix</span><b>' + money(cout) + '</b></div>' +
-    '<div class="kpi"><span>Economie estimee</span><b>' + money(eco) + '</b></div>' +
+    '<div class="kpi"><span>Coût des choix</span><b>' + money(cout) + '</b></div>' +
+    '<div class="kpi"><span>Économie estimée</span><b>' + money(eco) + '</b></div>' +
     '<div class="kpi"><span>Budget restant</span><b style="color:' + (budget - cout < 0 ? '#ff7a7a' : '#3ddc97') + '">' + money(budget - cout) + '</b></div>' +
     '</div>' + (state.recettes.resume ? '<p class="mut small mt">' + esc(state.recettes.resume) + '</p>' : '');
 }
@@ -1020,7 +1020,7 @@ function bindRecettes() {
     save(); renderRecettes();
   });
   $('#btnClearRecettes').addEventListener('click', function () {
-    if (!(state.recettes.items || []).length || !confirm('Supprimer les recettes generees ?')) return;
+    if (!(state.recettes.items || []).length || !confirm('Supprimer les recettes générées ?')) return;
     state.recettes.items = []; state.recettes.resume = '';
     save(); renderRecettes();
   });
@@ -1034,10 +1034,10 @@ function bindRecettes() {
   });
 }
 function genRecettes() {
-  if (!state.membres.length && !confirm('Aucun profil familial n est saisi. Generer quand meme des recettes standard ?')) return;
+  if (!state.membres.length && !confirm('Aucun profil familial n’est saisi. Générer quand même des recettes standard ?')) return;
   var btn = $('#btnGenRecettes');
   btn.disabled = true;
-  setStatus('#recettesStatus', 'Creation des recettes selon vos macros et les rabais... (30 a 90 secondes)', 'busy');
+  setStatus('#recettesStatus', 'Création des recettes selon vos macros et les rabais... (30 à 90 secondes)', 'busy');
   aiCall({
     system: 'Tu es un nutritionniste et chef de cuisine familiale au Quebec. Tu planifies des repas economiques qui respectent des cibles caloriques, des macros et des restrictions alimentaires. Tu reponds UNIQUEMENT avec un objet JSON valide, sans texte avant ni apres, sans bloc de code markdown.',
     prompt: promptRecettes(),
@@ -1045,7 +1045,7 @@ function genRecettes() {
   }).then(function (res) {
     var data = extractJSON(res.content);
     var arr = Array.isArray(data.recettes) ? data.recettes : [];
-    if (!arr.length) throw new Error('Aucune recette retournee.');
+    if (!arr.length) throw new Error('Aucune recette retournée.');
     state.recettes.items = arr.map(function (r) {
       r.id = uid();
       r.choisie = true;
@@ -1058,7 +1058,7 @@ function genRecettes() {
     state.recettes.resume = String(data.resume || '');
     state.recettes.generatedAt = new Date().toISOString();
     save(); renderRecettes();
-    setStatus('#recettesStatus', state.recettes.items.length + ' recettes proposees. Decochez celles que vous ne voulez pas, puis passez a la liste d epicerie.', 'ok');
+    setStatus('#recettesStatus', state.recettes.items.length + ' recettes proposées. Décochez celles que vous ne voulez pas, puis passez à la liste d’épicerie.', 'ok');
   }).catch(function (err) {
     setStatus('#recettesStatus', 'Erreur : ' + err.message, 'err');
   }).then(function () { btn.disabled = false; });
@@ -1073,6 +1073,7 @@ function convUnite(q, u) {
   return { q: q, u: un || 'unite' };
 }
 function jolieQte(q, u) {
+  if (u === 'unite') u = 'unité';
   if (u === 'g' && q >= 1000) return r1(q / 1000) + ' kg';
   if (u === 'ml' && q >= 1000) return r1(q / 1000) + ' L';
   return r1(q) + ' ' + u;
@@ -1092,12 +1093,12 @@ function trouverRabais(nom) {
 function storeOptions(courant) {
   var l = (state.epicerie.magasins || []).slice();
   if (courant && l.indexOf(courant) < 0) l.push(courant);
-  if (l.indexOf('A determiner') < 0) l.push('A determiner');
+  if (l.indexOf('À déterminer') < 0) l.push('À déterminer');
   return l;
 }
-function genererListe() {
+function générerListe() {
   var choisies = (state.recettes.items || []).filter(function (r) { return r.choisie; });
-  if (!choisies.length) { toast('Choisissez au moins une recette a la page 3.', 'err'); return; }
+  if (!choisies.length) { toast('Choisissez au moins une recette à la page 3.', 'err'); return; }
   var acces = state.epicerie.magasins || [];
   var map = {};
   choisies.forEach(function (r) {
@@ -1108,7 +1109,7 @@ function genererListe() {
       var key = normal(g.nom) + '|' + c.u;
       var rab = trouverRabais(g.nom);
       var mag = (rab && acces.indexOf(rab.magasin) >= 0) ? rab.magasin
-        : ((g.magasin && acces.indexOf(g.magasin) >= 0) ? g.magasin : (acces[0] || g.magasin || 'A determiner'));
+        : ((g.magasin && acces.indexOf(g.magasin) >= 0) ? g.magasin : (acces[0] || g.magasin || 'À déterminer'));
       if (!map[key]) {
         map[key] = {
           id: uid(), nom: g.nom, qte: 0, unite: c.u,
@@ -1148,19 +1149,19 @@ function renderEpicerie() {
   });
   $('#epicerieKpis').innerHTML = '<div class="kpis">' +
     '<div class="kpi"><span>Articles</span><b>' + items.length + '</b></div>' +
-    '<div class="kpi"><span>Deja pris</span><b>' + achetes + '</b></div>' +
-    '<div class="kpi"><span>Cout estime</span><b>' + money(total) + '</b></div>' +
-    '<div class="kpi"><span>Economie grace aux rabais</span><b>' + money(eco) + '</b></div>' +
-    '<div class="kpi"><span>Epiceries</span><b style="font-size:15px">' + (state.epicerie.magasins || []).length + '</b></div>' +
+    '<div class="kpi"><span>Déjà pris</span><b>' + achetes + '</b></div>' +
+    '<div class="kpi"><span>Coût estimé</span><b>' + money(total) + '</b></div>' +
+    '<div class="kpi"><span>Économie grâce aux rabais</span><b>' + money(eco) + '</b></div>' +
+    '<div class="kpi"><span>Épiceries</span><b style="font-size:15px">' + (state.epicerie.magasins || []).length + '</b></div>' +
     '</div>' + (state.epicerie.note ? '<p class="mut small mt">' + esc(state.epicerie.note) + '</p>' : '');
 
   if (!items.length) {
-    $('#epicerieList').innerHTML = '<div class="card"><p class="mut">La liste est vide. Choisissez vos epiceries accessibles puis cliquez sur <b>Generer la liste</b>.</p></div>';
+    $('#epicerieList').innerHTML = '<div class="card"><p class="mut">La liste est vide. Choisissez vos épiceries accessibles puis cliquez sur <b>Générer la liste</b>.</p></div>';
     return;
   }
   var byStore = {};
   items.forEach(function (it, idx) {
-    var st = it.magasin || 'A determiner';
+    var st = it.magasin || 'À déterminer';
     if (!byStore[st]) byStore[st] = [];
     byStore[st].push({ it: it, idx: idx });
   });
@@ -1187,7 +1188,7 @@ function listeTexte() {
   var L = ['LISTE D EPICERIE', (state.rabais.ville ? 'Ville : ' + state.rabais.ville : ''), 'Semaine du ' + dateFr(state.rabais.semaine), ''];
   var byStore = {};
   items.forEach(function (it) {
-    var st = it.magasin || 'A determiner';
+    var st = it.magasin || 'À déterminer';
     if (!byStore[st]) byStore[st] = [];
     byStore[st].push(it);
   });
@@ -1208,12 +1209,12 @@ function listeTexte() {
 }
 function optimiserListeIA() {
   var items = state.epicerie.items || [];
-  if (!items.length) { toast('Generez d abord la liste.', 'err'); return; }
+  if (!items.length) { toast('Générez d’abord la liste.', 'err'); return; }
   var btn = $('#btnOptimAI');
   btn.disabled = true;
-  setStatus('#epicerieStatus', 'Optimisation de la liste par l IA...', 'busy');
+  setStatus('#epicerieStatus', 'Optimisation de la liste par l’IA...', 'busy');
   var L = [];
-  L.push('Epiceries accessibles : ' + (state.epicerie.magasins || []).join(', '));
+  L.push('Épiceries accessibles : ' + (state.epicerie.magasins || []).join(', '));
   L.push('Rabais de la semaine retenus :');
   L.push(rabaisTexte());
   L.push('');
@@ -1222,7 +1223,7 @@ function optimiserListeIA() {
     return { nom: i.nom, quantite: r1(i.qte), unite: i.unite, categorie: i.categorie, magasin: i.magasin, cout: r1(i.cout) };
   })));
   L.push('');
-  L.push('TACHE : nettoie et optimise cette liste d epicerie.');
+  L.push('TACHE : nettoie et optimise cette liste d’épicerie.');
   L.push('1. Fusionne les doublons et harmonise les unites (g, kg, ml, L, unite, paquet).');
   L.push('2. Arrondis les quantites a des formats vendus en magasin.');
   L.push('3. Attribue chaque article a l epicerie accessible la plus avantageuse (utilise les rabais).');
@@ -1239,7 +1240,7 @@ function optimiserListeIA() {
   }).then(function (res) {
     var data = extractJSON(res.content);
     var arr = Array.isArray(data.items) ? data.items : [];
-    if (!arr.length) throw new Error('Reponse vide.');
+    if (!arr.length) throw new Error('Réponse vide.');
     var anciens = {};
     items.forEach(function (i) { anciens[normal(i.nom)] = i; });
     state.epicerie.items = arr.map(function (o) {
@@ -1247,14 +1248,14 @@ function optimiserListeIA() {
       return {
         id: uid(), nom: String(o.nom || ''), qte: num(o.quantite), unite: String(o.unite || 'unite'),
         categorie: CATEGORIES.indexOf(o.categorie) >= 0 ? o.categorie : 'Autre',
-        magasin: String(o.magasin || (state.epicerie.magasins || [])[0] || 'A determiner'),
+        magasin: String(o.magasin || (state.epicerie.magasins || [])[0] || 'À déterminer'),
         enRabais: !!o.enRabais, cout: num(o.cout), recettes: vieux ? vieux.recettes : [],
         achete: vieux ? !!vieux.achete : false, manuel: false
       };
     });
     state.epicerie.note = String(data.note || '');
     save(); renderEpicerie();
-    setStatus('#epicerieStatus', 'Liste optimisee : ' + state.epicerie.items.length + ' articles.', 'ok');
+    setStatus('#epicerieStatus', 'Liste optimisée : ' + state.epicerie.items.length + ' articles.', 'ok');
   }).catch(function (err) {
     setStatus('#epicerieStatus', 'Erreur : ' + err.message, 'err');
   }).then(function () { btn.disabled = false; });
@@ -1282,16 +1283,16 @@ function bindEpicerie() {
     $('#newMagasin').value = '';
     renderChipsMag(); save(); renderEpicerie();
   });
-  $('#btnGenListe').addEventListener('click', genererListe);
+  $('#btnGenListe').addEventListener('click', générerListe);
   $('#btnOptimAI').addEventListener('click', optimiserListeIA);
   $('#btnAddArticle').addEventListener('click', function () {
-    var nom = prompt('Nom de l article ?');
+    var nom = prompt('Nom de l’article ?');
     if (!nom) return;
-    var q = prompt('Quantite (ex. 500 g, 2 unite) ?', '1 unite') || '1 unite';
+    var q = prompt('Quantité (ex. 500 g, 2 unités) ?', '1 unite') || '1 unite';
     var parts = q.trim().split(' ');
     state.epicerie.items.push({
       id: uid(), nom: nom, qte: num(parts[0], 1), unite: parts[1] || 'unite',
-      categorie: 'Autre', magasin: (state.epicerie.magasins || [])[0] || 'A determiner',
+      categorie: 'Autre', magasin: (state.epicerie.magasins || [])[0] || 'À déterminer',
       enRabais: false, cout: 0, recettes: [], achete: false, manuel: true
     });
     save(); renderEpicerie();
@@ -1303,11 +1304,11 @@ function bindEpicerie() {
   $('#btnCopyListe').addEventListener('click', function () {
     var txt = listeTexte();
     if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(txt).then(function () { toast('Liste copiee.', 'ok'); }, function () { toast('Copie impossible.', 'err'); });
+      navigator.clipboard.writeText(txt).then(function () { toast('Liste copiée.', 'ok'); }, function () { toast('Copie impossible.', 'err'); });
     } else {
       var ta = document.createElement('textarea');
       ta.value = txt; document.body.appendChild(ta); ta.select();
-      try { document.execCommand('copy'); toast('Liste copiee.', 'ok'); } catch (e) { toast('Copie impossible.', 'err'); }
+      try { document.execCommand('copy'); toast('Liste copiée.', 'ok'); } catch (e) { toast('Copie impossible.', 'err'); }
       document.body.removeChild(ta);
     }
   });
@@ -1341,7 +1342,7 @@ function majEtatIA() {
   var p = $('#aiState');
   var ok = !!(state.settings.apiKey || '').trim();
   p.className = 'pill' + (ok ? ' ok' : '');
-  p.textContent = ok ? 'IA prete' : 'IA non configuree';
+  p.textContent = ok ? 'IA prête' : 'IA non configurée';
 }
 function bindSettings() {
   $('#btnSettings').addEventListener('click', function () {
@@ -1358,7 +1359,7 @@ function bindSettings() {
     state.settings.webSearch = $('#optWebSearch').checked;
     save(); majEtatIA();
     $('#modalSettings').classList.remove('open');
-    toast('Reglages enregistres.', 'ok');
+    toast('Réglages enregistrés.', 'ok');
   });
   $('#btnExportData').addEventListener('click', function () {
     var copie = JSON.parse(JSON.stringify(state));
@@ -1383,13 +1384,13 @@ function bindSettings() {
         if (d.recettes) state.recettes = d.recettes;
         if (d.epicerie) state.epicerie = d.epicerie;
         save(); renderTout();
-        toast('Donnees importees.', 'ok');
+        toast('Données importées.', 'ok');
       } catch (e) { toast('Fichier invalide.', 'err'); }
     };
     fr.readAsText(f);
   });
   $('#btnResetAll').addEventListener('click', function () {
-    if (!confirm('Effacer toutes les donnees de l application dans ce navigateur ?')) return;
+    if (!confirm('Effacer toutes les données de l’application dans ce navigateur ?')) return;
     try { localStorage.removeItem(LS); } catch (e) {}
     location.reload();
   });
