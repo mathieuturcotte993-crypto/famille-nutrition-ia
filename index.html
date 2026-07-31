@@ -933,6 +933,7 @@ L.push('8. Lister les ustensiles et contenants necessaires (poele, four, mijoteu
 L.push('9. Donner des etapes de preparation detaillees et numerotees (au moins 5 etapes claires, avec temperatures et temps de cuisson precis).');
 L.push('10. Ajouter des conseils pratiques : substitutions possibles, conservation, rechauffage, variantes.');
 L.push('11. Donner les quantites d ingredients en grammes ou millilitres autant que possible (plutot qu en "unite") pour permettre un calcul precis par personne.');
+L.push('12. IMPORTANT : le JSON retourne doit etre strictement valide. N ajoute jamais de guillemets doubles a l interieur des textes (utilise des guillemets simples ou aucun). N ajoute pas de virgule finale dans les listes ou objets. Reste concis dans les descriptions, conseils et etapes pour eviter toute troncature.');
 L.push('');
 L.push('Categories d ingredients permises: ' + CATEGORIES.join(' | '));
 L.push('');
@@ -1088,15 +1089,14 @@ r[f] = el.type === 'checkbox' ? el.checked : num(el.value);
 save(); renderRecettes();
 });
 }
-function genRecettes() {
-if (!state.membres.length && !confirm('Aucun profil familial n’est saisi. Générer quand même des recettes standard ?')) return;
+function genRecettesTentative(tentative) {
 var btn = $('#btnGenRecettes');
 btn.disabled = true;
-setStatus('#recettesStatus', 'Création des recettes selon vos macros et les rabais... (30 à 90 secondes)', 'busy');
+setStatus('#recettesStatus', (tentative > 0 ? 'Réponse incomplète, nouvelle tentative... ' : 'Création des recettes selon vos macros et les rabais... ') + '(30 à 90 secondes)', 'busy');
 aiCall({
 system: 'Tu es un nutritionniste et chef de cuisine familiale au Quebec. Tu planifies des repas economiques qui respectent des cibles caloriques, des macros et des restrictions alimentaires. Tu reponds UNIQUEMENT avec un objet JSON valide, sans texte avant ni apres, sans bloc de code markdown.',
 prompt: promptRecettes(),
-maxTokens: 14000
+maxTokens: 16000
 }).then(function (res) {
 var data = extractJSON(res.content);
 var arr = Array.isArray(data.recettes) ? data.recettes : [];
@@ -1114,9 +1114,19 @@ state.recettes.resume = String(data.resume || '');
 state.recettes.generatedAt = new Date().toISOString();
 save(); renderRecettes();
 setStatus('#recettesStatus', state.recettes.items.length + ' recettes proposées. Décochez celles que vous ne voulez pas, puis passez à la liste d’épicerie.', 'ok');
+btn.disabled = false;
 }).catch(function (err) {
+if (tentative < 1) {
+genRecettesTentative(tentative + 1);
+} else {
 setStatus('#recettesStatus', 'Erreur : ' + err.message, 'err');
-}).then(function () { btn.disabled = false; });
+btn.disabled = false;
+}
+});
+}
+function genRecettes() {
+if (!state.membres.length && !confirm('Aucun profil familial n’est saisi. Générer quand même des recettes standard ?')) return;
+genRecettesTentative(0);
 }
 
 /* ======================= PAGE 4 : LISTE D EPICERIE ======================= */
