@@ -476,10 +476,42 @@ return { content: txt, sources: srcs };
 }
 function extractJSON(txt) {
 var s = String(txt || '');
+s = s.split('```json').join('```').split('```').join('');
 var i = s.indexOf('{');
 var j = s.lastIndexOf('}');
 if (i < 0 || j <= i) throw new Error("L'IA n'a pas retourné de données exploitables.");
-return JSON.parse(s.slice(i, j + 1));
+var candidate = s.slice(i, j + 1);
+try {
+return JSON.parse(candidate);
+} catch (e1) {
+var repaired = repairJSON(candidate);
+try {
+return JSON.parse(repaired);
+} catch (e2) {
+try { console.error('JSON invalide malgre reparation:', e2.message, repaired); } catch (e3) {}
+throw new Error("Réponse de l'IA mal formée (" + e2.message + "). Réessayez, ou réduisez le nombre de jours/repas demandés.");
+}
+}
+}
+function repairJSON(str) {
+var out = str;
+out = out.replace(/,(\s*[}\]])/g, '$1');
+out = out.replace(/[\u201C\u201D]/g, '"').replace(/[\u2018\u2019]/g, "'");
+out = out.replace(/:(\s*)(-?\d+(?:\.\d+)?)\s*\/\s*(\d+(?:\.\d+)?)(\s*[,}\]])/g, function (m, sp, a, b, end) {
+var v = parseFloat(a) / parseFloat(b);
+return ':' + sp + (isFinite(v) ? (Math.round(v * 100) / 100) : 0) + end;
+});
+out = out.replace(/:(\s*)(-?\d+(?:\.\d+)?)\s*-\s*\d+(?:\.\d+)?(\s*[,}\]])/g, function (m, sp, a, end) {
+return ':' + sp + a + end;
+});
+out = out.replace(/:(\s*)(-?\d+(?:\.\d+)?)\s*[a-zA-Z%$]+(\s*[,}\]])/g, function (m, sp, a, end) {
+return ':' + sp + a + end;
+});
+out = out.replace(/"((?:[^"\\]|\\.)*)"/g, function (m, inner) {
+var fixed = inner.replace(/[\r\n\t]/g, ' ');
+return '"' + fixed + '"';
+});
+return out;
 }
 
 /* ======================= PAGE 1 : FAMILLE ======================= */
@@ -933,7 +965,7 @@ L.push('8. Lister les ustensiles et contenants necessaires (poele, four, mijoteu
 L.push('9. Donner des etapes de preparation detaillees et numerotees (au moins 5 etapes claires, avec temperatures et temps de cuisson precis).');
 L.push('10. Ajouter des conseils pratiques : substitutions possibles, conservation, rechauffage, variantes.');
 L.push('11. Donner les quantites d ingredients en grammes ou millilitres autant que possible (plutot qu en "unite") pour permettre un calcul precis par personne.');
-L.push('12. IMPORTANT : le JSON retourne doit etre strictement valide. N ajoute jamais de guillemets doubles a l interieur des textes (utilise des guillemets simples ou aucun). N ajoute pas de virgule finale dans les listes ou objets. Reste concis dans les descriptions, conseils et etapes pour eviter toute troncature.');
+L.push('12. IMPORTANT : le JSON retourne doit etre strictement valide. N ajoute jamais de guillemets doubles a l interieur des textes (utilise des guillemets simples ou aucun). N ajoute pas de virgule finale dans les listes ou objets. Reste concis dans les descriptions, conseils et etapes pour eviter toute troncature. Champs numeriques (quantite, cout, calories, proteines, glucides, lipides, fibres, sucres, sodium, tempsPreparation, tempsCuisson, tempsMinutes, portions, jour) : toujours un nombre JSON simple, jamais une fraction (pas 1/2), jamais une plage (pas 4-6), jamais un nombre suivi d une unite ou d un mot (pas 200g, pas 4 personnes).');
 L.push('');
 L.push('Categories d ingredients permises: ' + CATEGORIES.join(' | '));
 L.push('');
@@ -1096,8 +1128,9 @@ setStatus('#recettesStatus', (tentative > 0 ? 'Réponse incomplète, nouvelle te
 aiCall({
 system: 'Tu es un nutritionniste et chef de cuisine familiale au Quebec. Tu planifies des repas economiques qui respectent des cibles caloriques, des macros et des restrictions alimentaires. Tu reponds UNIQUEMENT avec un objet JSON valide, sans texte avant ni apres, sans bloc de code markdown.',
 prompt: promptRecettes(),
-maxTokens: 16000
+maxTokens: 32000
 }).then(function (res) {
+if (res.stop_reason === 'max_tokens') throw new Error('Reponse tronquee (trop long pour le nombre de jours/repas demande). Nouvelle tentative...');
 var data = extractJSON(res.content);
 var arr = Array.isArray(data.recettes) ? data.recettes : [];
 if (!arr.length) throw new Error('Aucune recette retournée.');
@@ -1116,7 +1149,7 @@ save(); renderRecettes();
 setStatus('#recettesStatus', state.recettes.items.length + ' recettes proposées. Décochez celles que vous ne voulez pas, puis passez à la liste d’épicerie.', 'ok');
 btn.disabled = false;
 }).catch(function (err) {
-if (tentative < 1) {
+if (tentative < 2) {
 genRecettesTentative(tentative + 1);
 } else {
 setStatus('#recettesStatus', 'Erreur : ' + err.message, 'err');

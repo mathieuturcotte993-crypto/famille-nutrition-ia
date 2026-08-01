@@ -29,7 +29,7 @@ module.exports = async function handler(req, res) {
 
     const payload = {
       model: body.model || 'claude-sonnet-4-5',
-      max_tokens: Math.min(parseInt(body.max_tokens, 10) || 8000, 16000),
+      max_tokens: Math.min(parseInt(body.max_tokens, 10) || 8000, 32000),
       messages: messages
     };
     if (body.system) payload.system = body.system;
