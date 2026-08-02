@@ -280,6 +280,7 @@ footer{text-align:center;color:var(--mut);font-size:12px;padding:18px}
 <button class="btn ghost" id="btnExportWord">Exporter Word (recettes + épicerie)</button>
 <button class="btn ghost" id="btnPrint">Imprimer</button>
 <button class="btn ghost danger" id="btnResetChecks">Tout décocher</button>
+<button class="btn ghost danger" id="btnClearListe">Vider la liste</button>
 </div>
 <div class="status" id="epicerieStatus"></div>
 </div>
@@ -1611,6 +1612,11 @@ save(); renderEpicerie();
 });
 $('#btnResetChecks').addEventListener('click', function () {
 (state.epicerie.items || []).forEach(function (i) { i.achete = false; });
+save(); renderEpicerie();
+});
+$('#btnClearListe').addEventListener('click', function () {
+if (!(state.epicerie.items || []).length || !confirm('Vider la liste d\'épicerie ?')) return;
+state.epicerie.items = []; state.epicerie.note = ''; state.epicerie.dejaAuFrigo = [];
 save(); renderEpicerie();
 });
 $('#btnCopyListe').addEventListener('click', function () {
