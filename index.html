@@ -133,9 +133,10 @@ footer{text-align:center;color:var(--mut);font-size:12px;padding:18px}
 <nav class="tabs" id="tabs">
 <button class="tab active" data-page="famille"><b>1</b> Famille <span>&amp; macros</span></button>
 <button class="tab" data-page="rabais"><b>2</b> Rabais <span>de la semaine</span></button>
-<button class="tab" data-page="recettes"><b>3</b> Recettes <span>IA</span></button>
-<button class="tab" data-page="epicerie"><b>4</b> Liste <span>d'épicerie</span></button>
-<button class="tab" data-page="recherche"><b>5</b> Recherche <span>produit</span></button>
+  <button class="tab" data-page="frigo"><b>3</b> Frigo <span>&amp; garde-manger</span></button>
+<button class="tab" adata-page="recettes"><b>4</b> Recettes <span>IA</span></button>
+<button class="tab" data-page="epicerie"><b>5</b> Liste <span>d'épicerie</span></button>
+<button class="tab" data-page="recherche"><b>6</b> Recherche <span>produit</span></button>
 </nav>
 
 <main>
@@ -200,10 +201,29 @@ footer{text-align:center;color:var(--mut);font-size:12px;padding:18px}
 <div class="card hidden" id="rabaisSources"></div>
 </section>
 
+<section class="page" id="page-frigo">
+<div class="pagehead">
+<div>
+<h2>3. Frigo et garde-manger</h2>
+<p class="mut">Indiquez ce que vous avez déjà à la maison (frigo, congélateur, garde-manger) : l'IA en tient compte pour proposer des recettes qui utilisent ces ingrédients en priorité, et la liste d'épicerie ne réachètera pas ce que vous avez déjà.</p>
+</div>
+</div>
+<div class="card">
+<div class="row wrap">
+<button class="btn" id="btnAddFrigo">+ Ajouter un ingrédient</button>
+<button class="btn ghost danger" id="btnClearFrigo">Vider la liste</button>
+</div>
+</div>
+<div class="card">
+<div class="kpis" id="frigoKpis"></div>
+<div class="tbwrap mt" id="frigoTable"></div>
+</div>
+</section>
+
 <section class="page" id="page-recettes">
 <div class="pagehead">
 <div>
-<h2>3. Recettes proposées</h2>
+<h2>4. Recettes proposées</h2>
 <p class="mut">L'IA combine les rabais cochés et les profils de la famille pour proposer des recettes économiques qui respectent les calories, les macros et les restrictions.</p>
 </div>
 </div>
@@ -240,7 +260,7 @@ footer{text-align:center;color:var(--mut);font-size:12px;padding:18px}
 <section class="page" id="page-epicerie">
 <div class="pagehead">
 <div>
-<h2>4. Liste d'épicerie</h2>
+<h2>5. Liste d'épicerie</h2>
 <p class="mut">Générée automatiquement à partir des recettes choisies, regroupée par épicerie accessible et par rayon.</p>
 </div>
 </div>
@@ -270,7 +290,7 @@ footer{text-align:center;color:var(--mut);font-size:12px;padding:18px}
 <section class="page" id="page-recherche">
 <div class="pagehead">
 <div>
-<h2>5. Recherche d'un produit</h2>
+<h2>6. Recherche d'un produit</h2>
 <p class="mut">Écrivez un produit précis (ex. : oeufs, poulet haché, beurre d'arachide) : l'IA compare les circulaires de la semaine pour votre ville et vos magasins, et indique l'endroit le moins cher pour l'acheter.</p>
 </div>
 </div>
@@ -338,6 +358,7 @@ membres: [],
 rabais: { ville: '', province: 'QC', codePostal: '', semaine: '', magasins: ['IGA', 'Metro', 'Super C', 'Maxi', 'Provigo'], items: [], sources: [], note: '', generatedAt: null },
 recettes: { params: { jours: 5, temps: 45, budget: 150, style: '', repas: ['Souper'], onlyDeals: true, restes: false }, items: [], resume: '', generatedAt: null },
 epicerie: { magasins: ['IGA', 'Metro', 'Maxi'], items: [], note: '', generatedAt: null },
+frigo: { items: [] },
 recherche: { produit: '', resultats: [], note: '', sources: [], generatedAt: null },
 page: 'famille'
 };
@@ -375,6 +396,7 @@ if (Array.isArray(d.membres)) state.membres = d.membres;
 if (d.rabais) { for (var a in d.rabais) state.rabais[a] = d.rabais[a]; }
 if (d.recettes) { for (var b in d.recettes) state.recettes[b] = d.recettes[b]; }
 if (d.epicerie) { for (var c in d.epicerie) state.epicerie[c] = d.epicerie[c]; }
+if (d.frigo) { for (var g2 in d.frigo) state.frigo[g2] = d.frigo[g2]; }
 if (d.recherche) { for (var e2 in d.recherche) state.recherche[e2] = d.recherche[e2]; }
 } catch (e) {}
 }
@@ -910,7 +932,69 @@ setStatus('#rabaisStatus', 'Erreur : ' + err.message, 'err');
 }).then(function () { btn.disabled = false; });
 }
 
-/* ======================= PAGE 3 : RECETTES ======================= */
+/* ======================= PAGE 3 : FRIGO ======================= */
+function frigoVide() {
+return { id: uid(), nom: '', quantite: 0, unite: 'unite', categorie: 'Autre' };
+}
+function renderFrigo() {
+var items = state.frigo.items || [];
+$('#frigoKpis').innerHTML = '<div class="kpis"><div class="kpi"><span>Ingrédients déjà disponibles</span><b>' + items.length + '</b></div></div>';
+if (!items.length) {
+$('#frigoTable').innerHTML = "<p class=\"mut\">Aucun ingrédient enregistré. Ajoutez ce que vous avez déjà (frigo, congélateur, garde-manger) pour que l'IA en tienne compte dans les recettes et la liste d'épicerie.</p>";
+return;
+}
+var rows = items.map(function (it, i) {
+return '<tr>' +
+'<td><input data-fi="' + i + '" data-f="nom" value="' + esc(it.nom) + '" style="min-width:160px"></td>' +
+'<td><input type="number" step="0.01" data-fi="' + i + '" data-f="quantite" value="' + num(it.quantite) + '" style="width:82px"></td>' +
+'<td><input data-fi="' + i + '" data-f="unite" value="' + esc(it.unite) + '" style="width:90px"></td>' +
+'<td><select data-fi="' + i + '" data-f="categorie">' + optsHTML(CATEGORIES, it.categorie) + '</select></td>' +
+'<td><button class="btn ghost mini danger" data-delf="' + i + '">x</button></td>' +
+'</tr>';
+}).join('');
+$('#frigoTable').innerHTML = '<table><thead><tr><th>Ingrédient</th><th>Quantité</th><th>Unité</th><th>Catégorie</th><th></th></tr></thead><tbody>' + rows + '</tbody></table>';
+}
+function bindFrigo() {
+var tb = $('#frigoTable');
+tb.addEventListener('input', function (e) {
+var el = e.target, i = el.getAttribute('data-fi'), f = el.getAttribute('data-f');
+if (i === null || !f) return;
+var it = state.frigo.items[+i];
+if (!it) return;
+it[f] = el.type === 'number' ? num(el.value) : el.value;
+save();
+});
+tb.addEventListener('change', function (e) {
+var el = e.target, i = el.getAttribute('data-fi'), f = el.getAttribute('data-f');
+if (i === null || !f || el.tagName !== 'SELECT') return;
+state.frigo.items[+i][f] = el.value;
+save();
+});
+tb.addEventListener('click', function (e) {
+var b = e.target.closest('button[data-delf]');
+if (!b) return;
+state.frigo.items.splice(+b.getAttribute('data-delf'), 1);
+save(); renderFrigo();
+});
+$('#btnAddFrigo').addEventListener('click', function () {
+state.frigo.items.unshift(frigoVide());
+save(); renderFrigo();
+});
+$('#btnClearFrigo').addEventListener('click', function () {
+if (!state.frigo.items.length || !confirm('Vider la liste du frigo ?')) return;
+state.frigo.items = [];
+save(); renderFrigo();
+});
+}
+function frigoTexte() {
+var items = state.frigo.items || [];
+if (!items.length) return 'Aucun ingredient deja disponible signale.';
+return items.map(function (i) {
+return '- ' + i.nom + ' : ' + r1(i.quantite) + ' ' + (i.unite || 'unite') + (i.categorie ? ' | ' + i.categorie : '');
+}).join('\n');
+}
+
+/* ======================= PAGE 4 : RECETTES ======================= */
 function familleTexte() {
 if (!state.membres.length) return 'Aucun profil saisi : viser 4 portions standard de 600 kcal.';
 return state.membres.map(function (m) {
@@ -943,6 +1027,9 @@ L.push('');
 L.push('RABAIS DE LA SEMAINE A UTILISER EN PRIORITE (ville: ' + (state.rabais.ville || 'n/d') + ', semaine du ' + dateFr(state.rabais.semaine) + ') :');
 L.push(rabaisTexte());
 L.push('');
+L.push('INGREDIENTS DEJA DISPONIBLES (frigo, garde-manger, congelateur) A UTILISER EN PRIORITE POUR EVITER LE GASPILLAGE ET LES ACHATS INUTILES :');
+L.push(frigoTexte());
+L.push('');
 L.push('PARAMETRES :');
 L.push('- Jours a couvrir: ' + num(p.jours, 5));
 L.push('- Repas demandes: ' + (p.repas || ['Souper']).join(', '));
@@ -966,6 +1053,7 @@ L.push('9. Donner des etapes de preparation detaillees et numerotees (au moins 5
 L.push('10. Ajouter des conseils pratiques : substitutions possibles, conservation, rechauffage, variantes.');
 L.push('11. Donner les quantites d ingredients en grammes ou millilitres autant que possible (plutot qu en "unite") pour permettre un calcul precis par personne.');
 L.push('12. IMPORTANT : le JSON retourne doit etre strictement valide. N ajoute jamais de guillemets doubles a l interieur des textes (utilise des guillemets simples ou aucun). N ajoute pas de virgule finale dans les listes ou objets. Reste concis dans les descriptions, conseils et etapes pour eviter toute troncature. Champs numeriques (quantite, cout, calories, proteines, glucides, lipides, fibres, sucres, sodium, tempsPreparation, tempsCuisson, tempsMinutes, portions, jour) : toujours un nombre JSON simple, jamais une fraction (pas 1/2), jamais une plage (pas 4-6), jamais un nombre suivi d une unite ou d un mot (pas 200g, pas 4 personnes).');
+L.push('13. Utiliser en priorite les ingredients deja disponibles listes plus haut (frigo, garde-manger, congelateur) avant d en acheter d autres. Pour chaque ingredient de recette, indiquer dejaAuFrigo a true si cet ingredient correspond a un item deja disponible en quantite suffisante, sinon false.');
 L.push('');
 L.push('Categories d ingredients permises: ' + CATEGORIES.join(' | '));
 L.push('');
@@ -978,7 +1066,7 @@ L.push(' "nom": "", "description": "", "repas": "Souper", "jour": 1, "tempsPrepa
 L.push(' "ustensiles": ["", ""],');
 L.push(' "coutTotal": 0, "coutParPortion": 0, "economie": 0,');
 L.push(' "macrosParPortion": {"calories": 0, "proteines": 0, "glucides": 0, "lipides": 0, "fibres": 0, "sucres": 0, "sodium": 0},');
-L.push(' "ingredients": [{"nom": "", "quantite": 0, "unite": "g", "categorie": "", "magasin": "", "enRabais": false, "cout": 0}],');
+L.push(' "ingredients": [{"nom": "", "quantite": 0, "unite": "g", "categorie": "", "magasin": "", "enRabais": false, "dejaAuFrigo": false, "cout": 0}],');
 L.push(' "etapes": ["", ""],');
 L.push(' "conseils": "",');
 L.push(' "parPersonne": [{"nom": "", "portions": 1, "calories": 0}],');
@@ -1032,6 +1120,7 @@ var parPortionTxt = gp != null ? ' <span class="mut">(' + r1(gp / portionsTotal)
 return '<li>' + esc(g.nom) + ' - <b>' + r1(g.quantite) + ' ' + esc(g.unite || '') + '</b>' + parPortionTxt +
 (g.magasin ? ' <span class="mut">(' + esc(g.magasin) + ')</span>' : '') +
 (g.enRabais ? ' <span class="badge deal">rabais</span>' : '') +
+(g.dejaAuFrigo ? ' <span class="badge info">frigo</span>' : '') +
 (num(g.cout) ? ' <span class="mut">' + money(g.cout) + '</span>' : '') + '</li>';
 }).join('') + '</ul>' +
 '<div class="lab">Préparation</div><ol>' +
@@ -1162,7 +1251,7 @@ if (!state.membres.length && !confirm('Aucun profil familial n’est saisi. Gén
 genRecettesTentative(0);
 }
 
-/* ======================= PAGE 4 : LISTE D EPICERIE ======================= */
+/* ======================= PAGE 5 : LISTE D EPICERIE ======================= */
 function convUnite(q, u) {
 var un = normal(u);
 if (un === 'kg') return { q: q * 1000, u: 'g' };
@@ -1183,6 +1272,18 @@ var res = null;
 (state.rabais.items || []).forEach(function (it) {
 if (!it.garder || res) return;
 var p = normal(it.produit);
+if (!p) return;
+if (n.indexOf(p) >= 0 || p.indexOf(n) >= 0) res = it;
+});
+return res;
+}
+function trouverFrigo(nom) {
+var n = normal(nom);
+if (!n) return null;
+var res = null;
+(state.frigo.items || []).forEach(function (it) {
+if (res) return;
+var p = normal(it.nom);
 if (!p) return;
 if (n.indexOf(p) >= 0 || p.indexOf(n) >= 0) res = it;
 });
@@ -1221,7 +1322,33 @@ if (map[key].recettes.indexOf(r.nom) < 0) map[key].recettes.push(r.nom);
 });
 });
 var manuels = (state.epicerie.items || []).filter(function (i) { return i.manuel; });
-state.epicerie.items = Object.keys(map).map(function (k) { return map[k]; }).concat(manuels);
+Object.keys(map).forEach(function (key) {
+var it = map[key];
+var fr = trouverFrigo(it.nom);
+if (!fr) { it.dejaAuFrigo = false; return; }
+var cf = convUnite(num(fr.quantite), fr.unite);
+if (cf.u !== it.unite) { it.dejaAuFrigo = false; return; }
+var qteOriginale = it.qte;
+var coutOriginal = it.cout;
+var restant = qteOriginale - cf.q;
+it.dejaAuFrigo = true;
+if (restant <= 0) {
+it.qte = 0;
+it.cout = 0;
+it.note = "Déjà au frigo";
+} else {
+it.cout = qteOriginale > 0 ? coutOriginal * (restant / qteOriginale) : coutOriginal;
+it.qte = restant;
+it.note = "Partiellement au frigo (" + jolieQte(cf.q, cf.u) + " déjà disponible)";
+}
+});
+var dejaAuFrigoNoms = [];
+var restants = Object.keys(map).map(function (k) { return map[k]; }).filter(function (it) {
+if (it.dejaAuFrigo && it.qte <= 0) { dejaAuFrigoNoms.push(it.nom); return false; }
+return true;
+});
+state.epicerie.items = restants.concat(manuels);
+state.epicerie.dejaAuFrigo = dejaAuFrigoNoms;
 state.epicerie.generatedAt = new Date().toISOString();
 save(); renderEpicerie();
 toast(state.epicerie.items.length + ' articles dans la liste.', 'ok');
@@ -1231,6 +1358,8 @@ return '<div class="item' + (it.achete ? ' done' : '') + '">' +
 '<input type="checkbox" data-ep="' + i + '" data-f="achete"' + (it.achete ? ' checked' : '') + '>' +
 '<span class="qte">' + jolieQte(num(it.qte), it.unite || 'unite') + '</span>' +
 '<span class="nom">' + esc(it.nom) + (it.enRabais ? ' <span class="badge deal">rabais</span>' : '') +
+(it.dejaAuFrigo ? ' <span class="badge info">frigo</span>' : '') +
+(it.note ? ' <span class="mut small">(' + esc(it.note) + ')</span>' : '') +
 (it.recettes && it.recettes.length ? ' <span class="mut small">(' + esc(it.recettes.slice(0, 2).join(', ')) + ')</span>' : '') + '</span>' +
 '<select data-ep="' + i + '" data-f="magasin" style="width:130px;margin:0">' + optsHTML(storeOptions(it.magasin), it.magasin) + '</select>' +
 '<span class="prix">' + money(it.cout) + '</span>' +
@@ -1251,7 +1380,7 @@ $('#epicerieKpis').innerHTML = '<div class="kpis">' +
 '<div class="kpi"><span>Coût estimé</span><b>' + money(total) + '</b></div>' +
 '<div class="kpi"><span>Économie grâce aux rabais</span><b>' + money(eco) + '</b></div>' +
 '<div class="kpi"><span>Épiceries</span><b style="font-size:15px">' + (state.epicerie.magasins || []).length + '</b></div>' +
-'</div>' + (state.epicerie.note ? '<p class="mut small mt">' + esc(state.epicerie.note) + '</p>' : '');
+'</div>' + (state.epicerie.note ? '<p class="mut small mt">' + esc(state.epicerie.note) + '</p>' : '') + ((state.epicerie.dejaAuFrigo || []).length ? '<p class="mut small mt">Déjà au frigo, non ajouté à la liste : ' + (state.epicerie.dejaAuFrigo || []).map(esc).join(', ') + '</p>' : '');
 
 if (!items.length) {
 $('#epicerieList').innerHTML = '<div class="card"><p class="mut">La liste est vide. Choisissez vos épiceries accessibles puis cliquez sur <b>Générer la liste</b>.</p></div>';
@@ -1520,7 +1649,7 @@ save(); renderEpicerie();
 });
 }
 
-/* ======================= PAGE 5 : RECHERCHE PRODUIT ======================= */
+/* ======================= PAGE 6 : RECHERCHE PRODUIT ======================= */
 function promptRecherche(produit, locaux) {
 var L = [];
 L.push('Ville: ' + (state.rabais.ville || 'non precisee'));
@@ -1692,6 +1821,7 @@ if (Array.isArray(d.membres)) state.membres = d.membres;
 if (d.rabais) state.rabais = d.rabais;
 if (d.recettes) state.recettes = d.recettes;
 if (d.epicerie) state.epicerie = d.epicerie;
+if (d.frigo) state.frigo = d.frigo;
 if (d.recherche) state.recherche = d.recherche;
 save(); renderTout();
 toast('Données importées.', 'ok');
@@ -1722,6 +1852,7 @@ showPage(t.getAttribute('data-page'));
 });
 }
 function renderTout() {
+renderFrigo();
 renderFamille();
 renderRabais();
 renderRecettes();
@@ -1735,6 +1866,7 @@ bindFamille();
 bindRabais();
 bindRecettes();
 bindEpicerie();
+bindFrigo();
 bindRecherche();
 bindSettings();
 bindTabs();
