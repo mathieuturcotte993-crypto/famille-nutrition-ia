@@ -321,6 +321,18 @@ footer{text-align:center;color:var(--mut);font-size:12px;padding:18px}
 <label>Modèle
 <input id="model" placeholder="claude-sonnet-5">
 </label>
+<label>Vitesse de génération
+<select id="optVitesse">
+<option value="prudent">Prudent — petits lots, 2 en parallèle (connexion lente)</option>
+<option value="equilibre">Équilibré — 3 recettes par lot, 4 en parallèle (recommandé)</option>
+<option value="rapide">Rapide — 4 recettes par lot, 6 en parallèle</option>
+</select>
+</label>
+<p class="mut small">Les grosses demandes sont découpées en lots envoyés en parallèle : aucune réponse n'est assez longue pour être tronquée, et le temps total baisse fortement.</p>
+<label class="check"><input type="checkbox" id="optRapide" checked> Utiliser un modèle rapide pour les tâches simples (extraction de circulaire, optimisation de la liste)</label>
+<label>Modèle rapide
+<input id="modelRapide" placeholder="claude-haiku-4-5">
+</label>
 <label class="check"><input type="checkbox" id="optWebSearch" checked> Autoriser la recherche web (circulaires réelles de la semaine)</label>
 <div class="lab">Mes données</div>
 <div class="row wrap">
@@ -343,6 +355,7 @@ footer{text-align:center;color:var(--mut);font-size:12px;padding:18px}
 /* ======================= CONSTANTES ======================= */
 var LS = 'famille-nutrition-ia:v1';
 var MODEL_DEFAUT = 'claude-sonnet-5';
+var MODEL_RAPIDE = 'claude-haiku-4-5';
 
 var RESTRICTIONS = ['Sans gluten', 'Sans lactose', 'Végétarien', 'Végétalien', 'Sans noix', 'Sans arachides', 'Sans oeufs', 'Sans poisson', 'Sans fruits de mer', 'Sans porc', 'Halal', 'Casher', 'Faible en sodium', 'Faible en sucre', 'Diabète', 'Keto', 'Sans soya'];
 var ACTIVITES = [['sedentaire', 'Sédentaire', 1.2], ['leger', 'Léger (1-3 j/sem)', 1.375], ['modere', 'Modéré (3-5 j/sem)', 1.55], ['actif', 'Actif (6-7 j/sem)', 1.725], ['tres', 'Très actif / athlète', 1.9]];
@@ -354,7 +367,7 @@ var VILLES = ['Montréal', 'Québec', 'Laval', 'Gatineau', 'Longueuil', 'Sherbro
 
 /* ======================= ÉTAT ======================= */
 var state = {
-settings: { apiKey: '', model: MODEL_DEFAUT, webSearch: true },
+settings: { apiKey: '', model: MODEL_DEFAUT, modeleRapide: MODEL_RAPIDE, rapideActif: true, vitesse: 'equilibre', webSearch: true },
 membres: [],
 rabais: { ville: '', province: 'QC', codePostal: '', semaine: '', magasins: ['IGA', 'Metro', 'Super C', 'Maxi', 'Provigo'], items: [], sources: [], note: '', generatedAt: null },
 recettes: { params: { jours: 5, temps: 45, budget: 150, style: '', repas: ['Souper'], onlyDeals: true, restes: false }, items: [], resume: '', generatedAt: null },
@@ -436,105 +449,409 @@ return '<option value="' + esc(value) + '"' + (String(value) === String(val) ? '
 }
 
 /* ======================= APPELS IA ======================= */
+/*
+  Strategie "aucune demande trop grosse ne casse" :
+   1. Streaming NDJSON via /api/ai : la connexion ne reste jamais silencieuse,
+      donc plus de coupure de passerelle (504) ni de page HTML renvoyee au
+      client (la cause des anciennes erreurs "JSON").
+   2. Auto-continuation cote serveur : si le modele atteint max_tokens, la
+      generation reprend automatiquement la ou elle s est arretee.
+   3. Repli automatique sur l API Anthropic directe si /api/ai est absent.
+   4. Recuperation partielle : si le flux est coupe, le texte deja recu est
+      conserve et analyse au lieu d etre jete.
+*/
+
+var AI_TIMEOUT_MS = 295000;
+
+/* Modele rapide pour les taches simples et tres structurees (extraction,
+   nettoyage de liste) : nettement plus rapide, qualite equivalente ici. */
+function modeleLeger() {
+  if (state.settings.rapideActif === false) return null;
+  return state.settings.modeleRapide || MODEL_RAPIDE;
+}
+
+function aiFallbackError() {
+  var e = new Error('api-indisponible');
+  e.aiFallback = true;
+  return e;
+}
+
 function aiCall(opts) {
-var key = (state.settings.apiKey || '').trim();
-if (!key) return Promise.reject(new Error('Ajoutez votre clé API Anthropic dans les Réglages.'));
-var body = {
-apiKey: key,
-model: state.settings.model || MODEL_DEFAUT,
-messages: [{ role: 'user', content: opts.prompt }],
-max_tokens: opts.maxTokens || 8000
-};
-if (opts.system) body.system = opts.system;
-if (opts.webSearch && state.settings.webSearch) {
-body.webSearch = true;
-body.maxSearches = opts.maxSearches || 6;
-if (opts.userLocation) body.userLocation = opts.userLocation;
+  opts = opts || {};
+  var body = {
+    apiKey: (state.settings.apiKey || '').trim(),
+    model: opts.model || state.settings.model || MODEL_DEFAUT,
+    messages: [{ role: 'user', content: opts.prompt }],
+    max_tokens: opts.maxTokens || 8000,
+    stream: true,
+    autoContinue: opts.autoContinue !== false
+  };
+  if (opts.system) body.system = opts.system;
+  if (opts.webSearch && state.settings.webSearch) {
+    body.webSearch = true;
+    body.maxSearches = opts.maxSearches || 6;
+    if (opts.userLocation) body.userLocation = opts.userLocation;
+  }
+  return aiServer(body, opts).catch(function (err) {
+    if (err && err.aiFallback) {
+      if (!body.apiKey) throw new Error('Ajoutez votre cle API Anthropic dans les Reglages.');
+      return aiDirect(body, opts);
+    }
+    throw err;
+  });
 }
-return fetch('/api/ai', {
-method: 'POST',
-headers: { 'Content-Type': 'application/json' },
-body: JSON.stringify(body)
-}).then(function (r) {
-if (r.status === 404 || r.status === 405 || r.status === 501) return aiDirect(body);
-return r.text().then(function (txt) {
-var j = {};
-try { j = JSON.parse(txt); } catch (e) { throw new Error('Réponse serveur illisible (' + r.status + ')'); }
-if (!r.ok) throw new Error(j.error || ('Erreur ' + r.status));
-return j;
-});
-}, function () { return aiDirect(body); });
+
+function aiServer(body, opts) {
+  var ctrl = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+  var aborted = false;
+  var timer = setTimeout(function () { aborted = true; if (ctrl) ctrl.abort(); }, AI_TIMEOUT_MS);
+  function done(v) { clearTimeout(timer); return v; }
+  function fail(e) { clearTimeout(timer); throw e; }
+
+  return fetch('/api/ai', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+    signal: ctrl ? ctrl.signal : undefined
+  }).then(function (r) {
+    if (r.status === 404 || r.status === 405 || r.status === 501) return fail(aiFallbackError());
+    var ct = (r.headers.get('content-type') || '').toLowerCase();
+    if (!r.ok || ct.indexOf('ndjson') < 0 || !r.body || !r.body.getReader) {
+      return r.text().then(function (txt) {
+        var j = null;
+        try { j = JSON.parse(txt); } catch (e) { j = null; }
+        if (j && !r.ok) return fail(new Error(j.error || ('Erreur ' + r.status)));
+        if (j && r.ok) return done({ content: j.content || '', sources: j.sources || [], stop_reason: j.stop_reason || null, usage: j.usage || null });
+        if (r.status === 504) return fail(new Error('Le serveur a coupe la requete (504). Reduisez le nombre de jours ou de repas.'));
+        return fail(new Error('Reponse serveur illisible (' + r.status + ').'));
+      });
+    }
+    return aiReadNdjson(r, opts).then(done, fail);
+  }, function (e) {
+    clearTimeout(timer);
+    if (aborted || (e && e.name === 'AbortError')) throw new Error('Delai depasse. Reessayez avec moins de jours ou de repas.');
+    throw aiFallbackError();
+  });
 }
-function aiDirect(body) {
-var payload = { model: body.model, max_tokens: body.max_tokens, messages: body.messages };
-if (body.system) payload.system = body.system;
-if (body.webSearch) {
-var tool = { type: 'web_search_20250305', name: 'web_search', max_uses: body.maxSearches || 6 };
-if (body.userLocation) tool.user_location = body.userLocation;
-payload.tools = [tool];
+
+function aiReadNdjson(r, opts) {
+  var reader = r.body.getReader();
+  var dec = new TextDecoder();
+  var buf = '';
+  var content = '';
+  var result = null;
+  var errMsg = null;
+
+  function onLine(s) {
+    s = s.trim();
+    if (!s) return;
+    var ev;
+    try { ev = JSON.parse(s); } catch (e) { return; }
+    if (ev.type === 'delta') {
+      content += ev.text || '';
+      if (opts.onProgress) opts.onProgress(content.length, null);
+    } else if (ev.type === 'reset') {
+      content = ev.content || '';
+    } else if (ev.type === 'info') {
+      if (opts.onProgress) opts.onProgress(content.length, ev.message);
+    } else if (ev.type === 'done') {
+      result = {
+        content: (ev.content != null ? ev.content : content),
+        sources: ev.sources || [],
+        stop_reason: ev.stop_reason || null,
+        usage: ev.usage || null,
+        continuations: ev.continuations || 0
+      };
+    } else if (ev.type === 'error') {
+      errMsg = ev.error || 'Erreur IA';
+    }
+  }
+
+  function pump() {
+    return reader.read().then(function (c) {
+      if (c.done) {
+        if (buf) onLine(buf);
+        if (result) return result;
+        if (errMsg && !content) throw new Error(errMsg);
+        if (content) return { content: content, sources: [], stop_reason: 'incomplete', usage: null, partiel: true };
+        throw new Error(errMsg || 'Reponse vide du serveur IA.');
+      }
+      buf += dec.decode(c.value, { stream: true });
+      var parts = buf.split('\n');
+      buf = parts.pop();
+      for (var i = 0; i < parts.length; i++) onLine(parts[i]);
+      return pump();
+    });
+  }
+  return pump();
 }
-return fetch('https://api.anthropic.com/v1/messages', {
-method: 'POST',
-headers: {
-'Content-Type': 'application/json',
-'x-api-key': body.apiKey,
-'anthropic-version': '2023-06-01',
-'anthropic-dangerous-direct-browser-access': 'true'
-},
-body: JSON.stringify(payload)
-}).then(function (r) {
-return r.json().then(function (d) {
-if (!r.ok) throw new Error((d && d.error && d.error.message) || ('Erreur ' + r.status));
-var blocks = d.content || [];
-var txt = blocks.filter(function (b) { return b.type === 'text'; }).map(function (b) { return b.text; }).join('\n');
-var srcs = [];
-blocks.forEach(function (b) {
-if (b.type === 'web_search_tool_result' && Array.isArray(b.content)) {
-b.content.forEach(function (it) { if (it && it.url) srcs.push({ title: it.title || it.url, url: it.url }); });
+
+/* ---- Repli : appel direct navigateur -> API Anthropic (streaming) ---- */
+function aiCleanBlocks(blocks) {
+  var out = [];
+  for (var i = 0; i < blocks.length; i++) {
+    if (!blocks[i]) continue;
+    var b = JSON.parse(JSON.stringify(blocks[i]));
+    delete b._json;
+    if (b.type === 'text' && (typeof b.text !== 'string' || !b.text.length)) continue;
+    out.push(b);
+  }
+  var last = out[out.length - 1];
+  if (last && last.type === 'text') {
+    last.text = last.text.replace(/\s+$/, '');
+    if (!last.text.length) out.pop();
+  }
+  return out;
 }
-});
-return { content: txt, sources: srcs };
-});
-});
+
+function aiReadAnthropicSSE(r, onText) {
+  var reader = r.body.getReader();
+  var dec = new TextDecoder();
+  var buf = '';
+  var blocks = [];
+  var stop = null;
+
+  function onEvent(data) {
+    var ev, i, d;
+    try { ev = JSON.parse(data); } catch (e) { return; }
+    if (ev.type === 'content_block_start') {
+      i = ev.index;
+      var b = JSON.parse(JSON.stringify(ev.content_block || {}));
+      if (b.type === 'text' && typeof b.text !== 'string') b.text = '';
+      blocks[i] = b;
+    } else if (ev.type === 'content_block_delta') {
+      i = ev.index;
+      if (!blocks[i]) blocks[i] = { type: 'text', text: '' };
+      d = ev.delta || {};
+      if (d.type === 'text_delta') {
+        blocks[i].text = (blocks[i].text || '') + (d.text || '');
+        if (onText && d.text) onText(d.text);
+      } else if (d.type === 'input_json_delta') {
+        blocks[i]._json = (blocks[i]._json || '') + (d.partial_json || '');
+      }
+    } else if (ev.type === 'content_block_stop') {
+      i = ev.index;
+      if (blocks[i] && typeof blocks[i]._json === 'string') {
+        try { blocks[i].input = JSON.parse(blocks[i]._json || '{}'); } catch (e) { blocks[i].input = blocks[i].input || {}; }
+        delete blocks[i]._json;
+      }
+    } else if (ev.type === 'message_delta') {
+      if (ev.delta && ev.delta.stop_reason) stop = ev.delta.stop_reason;
+    } else if (ev.type === 'error') {
+      throw new Error((ev.error && ev.error.message) || 'Erreur de streaming');
+    }
+  }
+
+  function pump() {
+    return reader.read().then(function (c) {
+      if (c.done) return { blocks: blocks.filter(Boolean), stop_reason: stop };
+      buf += dec.decode(c.value, { stream: true });
+      var lines = buf.split('\n');
+      buf = lines.pop();
+      for (var k = 0; k < lines.length; k++) {
+        var line = lines[k].trim();
+        if (line.indexOf('data:') !== 0) continue;
+        var data = line.slice(5).trim();
+        if (!data || data === '[DONE]') continue;
+        onEvent(data);
+      }
+      return pump();
+    });
+  }
+  return pump();
 }
+
+function aiDirect(body, opts) {
+  opts = opts || {};
+  var messages = body.messages.slice();
+  var full = '';
+  var sources = [];
+  var cont = 0, pause = 0, stop = null;
+
+  function round() {
+    var payload = { model: body.model, max_tokens: body.max_tokens, messages: messages, stream: true };
+    if (body.system) payload.system = body.system;
+    if (body.webSearch) {
+      var tool = { type: 'web_search_20250305', name: 'web_search', max_uses: body.maxSearches || 6 };
+      if (body.userLocation) tool.user_location = body.userLocation;
+      payload.tools = [tool];
+    }
+    return fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': body.apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify(payload)
+    }).then(function (r) {
+      if (!r.ok) {
+        return r.text().then(function (t) {
+          var m = 'Erreur ' + r.status;
+          try { var j = JSON.parse(t); if (j && j.error && j.error.message) m = j.error.message; } catch (e) {}
+          throw new Error(m);
+        });
+      }
+      return aiReadAnthropicSSE(r, function (t) {
+        full += t;
+        if (opts.onProgress) opts.onProgress(full.length, null);
+      });
+    }).then(function (rd) {
+      stop = rd.stop_reason;
+      rd.blocks.forEach(function (b) {
+        if (b.type === 'web_search_tool_result' && Array.isArray(b.content)) {
+          b.content.forEach(function (it) { if (it && it.url && sources.length < 40) sources.push({ title: it.title || it.url, url: it.url }); });
+        }
+      });
+      if (stop === 'pause_turn' && pause < 6) {
+        pause++;
+        messages = messages.concat([{ role: 'assistant', content: aiCleanBlocks(rd.blocks) }]);
+        return round();
+      }
+      if (stop === 'max_tokens' && body.autoContinue !== false && cont < 8) {
+        var ab = aiCleanBlocks(rd.blocks);
+        if (!ab.length) return null;
+        cont++;
+        messages = messages.concat([
+          { role: 'assistant', content: ab },
+          { role: 'user', content: 'Continue EXACTEMENT la ou tu t es arrete, au caractere pres. Ne repete rien, aucune introduction, aucun bloc de code. Poursuis le JSON jusqu a ce qu il soit complet.' }
+        ]);
+        if (opts.onProgress) opts.onProgress(full.length, 'suite de la reponse (' + cont + ')...');
+        return round();
+      }
+      return null;
+    });
+  }
+
+  return round().then(function () {
+    return { content: full.trim(), sources: sources, stop_reason: stop, usage: null };
+  });
+}
+
+/* ---- Execution en parallele avec limite de concurrence ---- */
+function decouper(arr, taille) {
+  var out = [], i;
+  taille = Math.max(1, taille | 0);
+  for (i = 0; i < arr.length; i += taille) out.push(arr.slice(i, i + taille));
+  return out;
+}
+
+function pool(items, limite, worker) {
+  limite = Math.max(1, Math.min(limite | 0 || 1, items.length || 1));
+  var index = 0;
+  var resultats = new Array(items.length);
+  function suivant() {
+    if (index >= items.length) return Promise.resolve();
+    var i = index++;
+    return Promise.resolve()
+      .then(function () { return worker(items[i], i); })
+      .then(function (v) { resultats[i] = { ok: true, valeur: v }; },
+        function (e) { resultats[i] = { ok: false, erreur: e }; })
+      .then(suivant);
+  }
+  var lanceurs = [];
+  for (var k = 0; k < limite; k++) lanceurs.push(suivant());
+  return Promise.all(lanceurs).then(function () { return resultats; });
+}
+
+/* ======================= JSON TOLERANT ======================= */
 function extractJSON(txt) {
-var s = String(txt || '');
-s = s.split('```json').join('```').split('```').join('');
-var i = s.indexOf('{');
-var j = s.lastIndexOf('}');
-if (i < 0 || j <= i) throw new Error("L'IA n'a pas retourné de données exploitables.");
-var candidate = s.slice(i, j + 1);
-try {
-return JSON.parse(candidate);
-} catch (e1) {
-var repaired = repairJSON(candidate);
-try {
-return JSON.parse(repaired);
-} catch (e2) {
-try { console.error('JSON invalide malgre reparation:', e2.message, repaired); } catch (e3) {}
-throw new Error("Réponse de l'IA mal formée (" + e2.message + "). Réessayez, ou réduisez le nombre de jours/repas demandés.");
+  var s = String(txt || '');
+  s = s.replace(/```json/gi, '```').split('```').join('');
+  var i = s.indexOf('{');
+  if (i < 0) throw new Error("L'IA n'a pas retourné de données exploitables.");
+  var j = s.lastIndexOf('}');
+  var candidats = [];
+  if (j > i) candidats.push(s.slice(i, j + 1));
+  candidats.push(s.slice(i));
+
+  var derniere = null;
+  for (var c = 0; c < candidats.length; c++) {
+    var base = candidats[c];
+    var essais = [base, repairJSON(base), fermerJSON(base), fermerJSON(repairJSON(base)), repairJSON(fermerJSON(base))];
+    for (var e = 0; e < essais.length; e++) {
+      try { return JSON.parse(essais[e]); } catch (err) { derniere = err; }
+    }
+  }
+  throw new Error("Réponse de l'IA mal formée (" + (derniere ? derniere.message : 'inconnu') + ").");
 }
+
+/* Ferme un JSON tronque : chaines, objets et tableaux restes ouverts. */
+function fermerJSON(str) {
+  var s = String(str || '');
+  var pile = [], inStr = false, esc = false;
+  for (var i = 0; i < s.length; i++) {
+    var ch = s.charAt(i);
+    if (inStr) {
+      if (esc) { esc = false; }
+      else if (ch === '\\') { esc = true; }
+      else if (ch === '"') { inStr = false; }
+      continue;
+    }
+    if (ch === '"') { inStr = true; continue; }
+    if (ch === '{') { pile.push('}'); continue; }
+    if (ch === '[') { pile.push(']'); continue; }
+    if (ch === '}' || ch === ']') { pile.pop(); continue; }
+  }
+  var out = s;
+  if (esc) out = out.slice(0, -1);
+  if (inStr) out += '"';
+
+  // Retire les fragments incomplets en fin de chaine.
+  var avant;
+  for (var n = 0; n < 6; n++) {
+    avant = out;
+    out = out.replace(/\s*[,:]\s*$/, '');
+    out = out.replace(/,\s*"[^"]*"\s*$/, '');
+    out = out.replace(/\{\s*"[^"]*"\s*$/, '{');
+    out = out.replace(/,\s*\{\s*$/, '');
+    out = out.replace(/\[\s*\{\s*$/, '[');
+    out = out.replace(/(:\s*-?\d+)\.\s*$/, '$1');
+    out = out.replace(/:\s*-\s*$/, '');
+    out = out.replace(/:\s*(?:t|tr|tru|f|fa|fal|fals|n|nu|nul)\s*$/, '');
+    if (out === avant) break;
+  }
+  // Recalcule la pile apres nettoyage.
+  pile = []; inStr = false; esc = false;
+  for (var k = 0; k < out.length; k++) {
+    var c2 = out.charAt(k);
+    if (inStr) {
+      if (esc) esc = false;
+      else if (c2 === '\\') esc = true;
+      else if (c2 === '"') inStr = false;
+      continue;
+    }
+    if (c2 === '"') { inStr = true; continue; }
+    if (c2 === '{') { pile.push('}'); continue; }
+    if (c2 === '[') { pile.push(']'); continue; }
+    if (c2 === '}' || c2 === ']') { pile.pop(); continue; }
+  }
+  if (inStr) out += '"';
+  for (var p = pile.length - 1; p >= 0; p--) out += pile[p];
+  out = out.replace(/,(\s*[}\]])/g, '$1');
+  return out;
 }
-}
+
 function repairJSON(str) {
-var out = str;
-out = out.replace(/,(\s*[}\]])/g, '$1');
-out = out.replace(/[\u201C\u201D]/g, '"').replace(/[\u2018\u2019]/g, "'");
-out = out.replace(/:(\s*)(-?\d+(?:\.\d+)?)\s*\/\s*(\d+(?:\.\d+)?)(\s*[,}\]])/g, function (m, sp, a, b, end) {
-var v = parseFloat(a) / parseFloat(b);
-return ':' + sp + (isFinite(v) ? (Math.round(v * 100) / 100) : 0) + end;
-});
-out = out.replace(/:(\s*)(-?\d+(?:\.\d+)?)\s*-\s*\d+(?:\.\d+)?(\s*[,}\]])/g, function (m, sp, a, end) {
-return ':' + sp + a + end;
-});
-out = out.replace(/:(\s*)(-?\d+(?:\.\d+)?)\s*[a-zA-Z%$]+(\s*[,}\]])/g, function (m, sp, a, end) {
-return ':' + sp + a + end;
-});
-out = out.replace(/"((?:[^"\\]|\\.)*)"/g, function (m, inner) {
-var fixed = inner.replace(/[\r\n\t]/g, ' ');
-return '"' + fixed + '"';
-});
-return out;
+  var out = str;
+  out = out.replace(/,(\s*[}\]])/g, '$1');
+  out = out.replace(/[“”]/g, '"').replace(/[‘’]/g, "'");
+  out = out.replace(/:(\s*)(-?\d+(?:\.\d+)?)\s*\/\s*(\d+(?:\.\d+)?)(\s*[,}\]])/g, function (m, sp, a, b, end) {
+    var v = parseFloat(a) / parseFloat(b);
+    return ':' + sp + (isFinite(v) ? (Math.round(v * 100) / 100) : 0) + end;
+  });
+  out = out.replace(/:(\s*)(-?\d+(?:\.\d+)?)\s*-\s*\d+(?:\.\d+)?(\s*[,}\]])/g, function (m, sp, a, end) {
+    return ':' + sp + a + end;
+  });
+  out = out.replace(/:(\s*)(-?\d+(?:\.\d+)?)\s*[a-zA-Z%$]+(\s*[,}\]])/g, function (m, sp, a, end) {
+    return ':' + sp + a + end;
+  });
+  out = out.replace(/"((?:[^"\\]|\\.)*)"/g, function (m, inner) {
+    var fixed = inner.replace(/[\r\n\t]/g, ' ');
+    return '"' + fixed + '"';
+  });
+  return out;
 }
 
 /* ======================= PAGE 1 : FAMILLE ======================= */
@@ -905,7 +1222,10 @@ system: 'Tu es un specialiste des circulaires d epicerie au Quebec et au Canada.
 prompt: promptRabais(null),
 webSearch: true,
 maxSearches: 8,
-maxTokens: 8000,
+maxTokens: 16000,
+onProgress: function (n, msg) {
+setStatus('#rabaisStatus', 'Analyse des circulaires de la semaine pour ' + state.rabais.ville + '... ' + (msg ? msg : (n ? Math.round(n / 1000) + ' k caractères' : 'recherche en cours')), 'busy');
+},
 userLocation: { type: 'approximate', city: state.rabais.ville, region: state.rabais.province || 'Quebec', country: 'CA', timezone: 'America/Toronto' }
 }).then(function (res) {
 appliquerRabais(extractJSON(res.content), res.sources);
@@ -923,7 +1243,9 @@ setStatus('#rabaisStatus', 'Extraction des rabais du texte collé...', 'busy');
 aiCall({
 system: 'Tu extrais des donnees structurees de circulaires d epicerie. Tu reponds UNIQUEMENT avec un objet JSON valide, sans texte autour.',
 prompt: promptRabais(txt),
-maxTokens: 8000
+model: modeleLeger(),
+maxTokens: 16000,
+onProgress: function (n) { setStatus('#rabaisStatus', 'Extraction des rabais du texte collé... ' + Math.round(n / 1000) + ' k caractères', 'busy'); }
 }).then(function (res) {
 appliquerRabais(extractJSON(res.content), []);
 setStatus('#rabaisStatus', state.rabais.items.length + ' items extraits du texte.', 'ok');
@@ -1017,66 +1339,87 @@ return '- ' + i.produit + ' | ' + (i.magasin || 'magasin inconnu') + ' | ' + mon
 (i.categorie ? ' | ' + i.categorie : '');
 }).join('\n');
 }
-function promptRecettes() {
-var p = state.recettes.params;
-var nb = Math.max(1, Math.min(14, num(p.jours, 5))) * Math.max(1, (p.repas || ['Souper']).length);
-nb = Math.min(nb, 14);
-var L = [];
-L.push('PROFILS DE LA FAMILLE (a respecter pour les quantites, les calories et les macros) :');
-L.push(familleTexte());
-L.push('');
-L.push('RABAIS DE LA SEMAINE A UTILISER EN PRIORITE (ville: ' + (state.rabais.ville || 'n/d') + ', semaine du ' + dateFr(state.rabais.semaine) + ') :');
-L.push(rabaisTexte());
-L.push('');
-L.push('INGREDIENTS DEJA DISPONIBLES (frigo, garde-manger, congelateur) A UTILISER EN PRIORITE POUR EVITER LE GASPILLAGE ET LES ACHATS INUTILES :');
-L.push(frigoTexte());
-L.push('');
-L.push('PARAMETRES :');
-L.push('- Jours a couvrir: ' + num(p.jours, 5));
-L.push('- Repas demandes: ' + (p.repas || ['Souper']).join(', '));
-L.push('- Temps de preparation maximal: ' + num(p.temps, 45) + ' minutes');
-L.push('- Budget cible pour la periode: ' + money(p.budget));
-if (p.style) L.push('- Style de cuisine souhaite: ' + p.style);
-L.push('- ' + (p.onlyDeals ? 'Maximiser l utilisation des items en rabais (economie maximale).' : 'Les rabais sont un atout mais pas une obligation.'));
-if (p.restes) L.push('- Prévoir des portions supplémentaires pour les lunchs (restes).');
-L.push('');
-L.push('TACHE : propose ' + nb + ' recettes differentes, economiques, realistes, equilibrees ET DETAILLEES.');
-L.push('Regles importantes :');
-L.push('1. Respecter toutes les restrictions et allergies : aucune recette ne doit contenir un aliment interdit.');
-L.push('2. Ajuster les quantites au nombre exact de personnes (' + Math.max(1, state.membres.length) + ') et a leurs besoins caloriques.');
-L.push('3. Utiliser en priorite les produits en rabais listes plus haut et indiquer le magasin pour chaque ingredient.');
-L.push('4. Calculer les macros par portion de facon realiste et coherente avec les besoins de la famille, incluant fibres, sucres et sodium.');
-L.push('5. Les couts sont en dollars canadiens et bases sur les prix en rabais quand ils existent.');
-L.push('6. Varier les sources de proteines et les legumes.');
-L.push('7. Donner une description courte et appetissante de chaque recette (2-3 phrases).');
-L.push('8. Lister les ustensiles et contenants necessaires (poele, four, mijoteuse, etc.).');
-L.push('9. Donner des etapes de preparation detaillees et numerotees (au moins 5 etapes claires, avec temperatures et temps de cuisson precis).');
-L.push('10. Ajouter des conseils pratiques : substitutions possibles, conservation, rechauffage, variantes.');
-L.push('11. Donner les quantites d ingredients en grammes ou millilitres autant que possible (plutot qu en "unite") pour permettre un calcul precis par personne.');
-L.push('12. IMPORTANT : le JSON retourne doit etre strictement valide. N ajoute jamais de guillemets doubles a l interieur des textes (utilise des guillemets simples ou aucun). N ajoute pas de virgule finale dans les listes ou objets. Reste concis dans les descriptions, conseils et etapes pour eviter toute troncature. Champs numeriques (quantite, cout, calories, proteines, glucides, lipides, fibres, sucres, sodium, tempsPreparation, tempsCuisson, tempsMinutes, portions, jour) : toujours un nombre JSON simple, jamais une fraction (pas 1/2), jamais une plage (pas 4-6), jamais un nombre suivi d une unite ou d un mot (pas 200g, pas 4 personnes).');
-L.push('13. Utiliser en priorite les ingredients deja disponibles listes plus haut (frigo, garde-manger, congelateur) avant d en acheter d autres. Pour chaque ingredient de recette, indiquer dejaAuFrigo a true si cet ingredient correspond a un item deja disponible en quantite suffisante, sinon false.');
-L.push('');
-L.push('Categories d ingredients permises: ' + CATEGORIES.join(' | '));
-L.push('');
-L.push('Reponds UNIQUEMENT avec ce JSON :');
-L.push('{');
-L.push(' "resume": "phrase courte sur les economies realisees",');
-L.push(' "recettes": [');
-L.push(' {');
-L.push(' "nom": "", "description": "", "repas": "Souper", "jour": 1, "tempsPreparation": 15, "tempsCuisson": 20, "tempsMinutes": 30, "portions": 4,');
-L.push(' "ustensiles": ["", ""],');
-L.push(' "coutTotal": 0, "coutParPortion": 0, "economie": 0,');
-L.push(' "macrosParPortion": {"calories": 0, "proteines": 0, "glucides": 0, "lipides": 0, "fibres": 0, "sucres": 0, "sodium": 0},');
-L.push(' "ingredients": [{"nom": "", "quantite": 0, "unite": "g", "categorie": "", "magasin": "", "enRabais": false, "dejaAuFrigo": false, "cout": 0}],');
-L.push(' "etapes": ["", ""],');
-L.push(' "conseils": "",');
-L.push(' "parPersonne": [{"nom": "", "portions": 1, "calories": 0}],');
-L.push(' "respecte": ["Sans gluten"],');
-L.push(' "notes": ""');
-L.push(' }');
-L.push(' ]');
-L.push('}');
-return L.join('\n');
+/* Contexte stable, identique pour tous les lots : il est envoye en "system"
+   avec cache_control, donc l API le met en cache et les lots suivants
+   partent beaucoup plus vite. */
+function contexteRecettes() {
+  var L = [];
+  L.push('PROFILS DE LA FAMILLE (a respecter pour les quantites, les calories et les macros) :');
+  L.push(familleTexte());
+  L.push('');
+  L.push('RABAIS DE LA SEMAINE A UTILISER EN PRIORITE (ville: ' + (state.rabais.ville || 'n/d') + ', semaine du ' + dateFr(state.rabais.semaine) + ') :');
+  L.push(rabaisTexte());
+  L.push('');
+  L.push('INGREDIENTS DEJA DISPONIBLES (frigo, garde-manger, congelateur) A UTILISER EN PRIORITE POUR EVITER LE GASPILLAGE ET LES ACHATS INUTILES :');
+  L.push(frigoTexte());
+  L.push('');
+  L.push('Categories d ingredients permises: ' + CATEGORIES.join(' | '));
+  return L.join('\n');
+}
+
+/* Un creneau = un repas d un jour. La demande est ensuite decoupee en lots. */
+function creneauxRecettes(p) {
+  var jours = Math.max(1, Math.min(14, num(p.jours, 5)));
+  var repas = (p.repas && p.repas.length) ? p.repas : ['Souper'];
+  var out = [];
+  for (var j = 1; j <= jours; j++) {
+    for (var k = 0; k < repas.length; k++) out.push({ jour: j, repas: repas[k] });
+  }
+  return out;
+}
+
+function promptLotRecettes(creneaux, p, noLot, nbLots) {
+  var L = [];
+  L.push('PARAMETRES :');
+  L.push('- Jours a couvrir au total dans le plan: ' + num(p.jours, 5));
+  L.push('- Repas demandes: ' + (p.repas || ['Souper']).join(', '));
+  L.push('- Temps de preparation maximal: ' + num(p.temps, 45) + ' minutes');
+  L.push('- Budget cible pour la periode complete: ' + money(p.budget));
+  if (p.style) L.push('- Style de cuisine souhaite: ' + p.style);
+  L.push('- ' + (p.onlyDeals ? 'Maximiser l utilisation des items en rabais (economie maximale).' : 'Les rabais sont un atout mais pas une obligation.'));
+  if (p.restes) L.push('- Prevoir des portions supplementaires pour les lunchs (restes).');
+  L.push('');
+  L.push('TACHE : tu produis le LOT ' + noLot + ' SUR ' + nbLots + ' d un plan de repas familial.');
+  L.push('Propose EXACTEMENT ' + creneaux.length + ' recettes, une par creneau, toutes differentes entre elles :');
+  creneaux.forEach(function (c, i) {
+    L.push('  ' + (i + 1) + '. jour ' + c.jour + ' - ' + c.repas);
+  });
+  L.push('Les champs "jour" et "repas" de chaque recette doivent correspondre exactement au creneau demande, dans le meme ordre.');
+  L.push('');
+  L.push('Regles importantes :');
+  L.push('1. Respecter toutes les restrictions et allergies : aucune recette ne doit contenir un aliment interdit.');
+  L.push('2. Ajuster les quantites au nombre exact de personnes (' + Math.max(1, state.membres.length) + ') et a leurs besoins caloriques.');
+  L.push('3. Utiliser en priorite les produits en rabais listes plus haut et indiquer le magasin pour chaque ingredient.');
+  L.push('4. Calculer les macros par portion de facon realiste et coherente, incluant fibres, sucres et sodium.');
+  L.push('5. Les couts sont en dollars canadiens et bases sur les prix en rabais quand ils existent.');
+  L.push('6. Varier les sources de proteines et les legumes a l interieur du lot.');
+  L.push('7. Donner une description courte et appetissante de chaque recette (2-3 phrases).');
+  L.push('8. Lister les ustensiles et contenants necessaires (poele, four, mijoteuse, etc.).');
+  L.push('9. Donner des etapes de preparation detaillees et numerotees (au moins 5 etapes claires, avec temperatures et temps de cuisson precis).');
+  L.push('10. Ajouter des conseils pratiques : substitutions possibles, conservation, rechauffage, variantes.');
+  L.push('11. Donner les quantites d ingredients en grammes ou millilitres autant que possible (plutot qu en "unite").');
+  L.push('12. IMPORTANT : le JSON retourne doit etre strictement valide. N ajoute jamais de guillemets doubles a l interieur des textes. Pas de virgule finale. Champs numeriques (quantite, cout, calories, proteines, glucides, lipides, fibres, sucres, sodium, tempsPreparation, tempsCuisson, tempsMinutes, portions, jour) : toujours un nombre JSON simple, jamais une fraction (pas 1/2), jamais une plage (pas 4-6), jamais un nombre suivi d une unite (pas 200g).');
+  L.push('13. Utiliser en priorite les ingredients deja disponibles (frigo, garde-manger, congelateur). Pour chaque ingredient, mettre dejaAuFrigo a true si l ingredient correspond a un item deja disponible en quantite suffisante, sinon false.');
+  L.push('14. Aucun texte avant ou apres le JSON, aucun bloc de code markdown.');
+  L.push('');
+  L.push('Reponds UNIQUEMENT avec ce JSON :');
+  L.push('{');
+  L.push(' "recettes": [');
+  L.push(' {');
+  L.push(' "nom": "", "description": "", "repas": "Souper", "jour": 1, "tempsPreparation": 15, "tempsCuisson": 20, "tempsMinutes": 30, "portions": 4,');
+  L.push(' "ustensiles": ["", ""],');
+  L.push(' "coutTotal": 0, "coutParPortion": 0, "economie": 0,');
+  L.push(' "macrosParPortion": {"calories": 0, "proteines": 0, "glucides": 0, "lipides": 0, "fibres": 0, "sucres": 0, "sodium": 0},');
+  L.push(' "ingredients": [{"nom": "", "quantite": 0, "unite": "g", "categorie": "", "magasin": "", "enRabais": false, "dejaAuFrigo": false, "cout": 0}],');
+  L.push(' "etapes": ["", ""],');
+  L.push(' "conseils": "",');
+  L.push(' "parPersonne": [{"nom": "", "portions": 1, "calories": 0}],');
+  L.push(' "respecte": ["Sans gluten"],');
+  L.push(' "notes": ""');
+  L.push(' }');
+  L.push(' ]');
+  L.push('}');
+  return L.join('\n');
 }
 function versGrammes(qte, unite) {
 var c = convUnite(num(qte), unite);
@@ -1211,45 +1554,185 @@ r[f] = el.type === 'checkbox' ? el.checked : num(el.value);
 save(); renderRecettes();
 });
 }
-function genRecettesTentative(tentative) {
-var btn = $('#btnGenRecettes');
-btn.disabled = true;
-setStatus('#recettesStatus', (tentative > 0 ? 'Réponse incomplète, nouvelle tentative... ' : 'Création des recettes selon vos macros et les rabais... ') + '(30 à 90 secondes)', 'busy');
-aiCall({
-system: 'Tu es un nutritionniste et chef de cuisine familiale au Quebec. Tu planifies des repas economiques qui respectent des cibles caloriques, des macros et des restrictions alimentaires. Tu reponds UNIQUEMENT avec un objet JSON valide, sans texte avant ni apres, sans bloc de code markdown.',
-prompt: promptRecettes(),
-maxTokens: 32000
-}).then(function (res) {
-if (res.stop_reason === 'max_tokens') throw new Error('Reponse tronquee (trop long pour le nombre de jours/repas demande). Nouvelle tentative...');
-var data = extractJSON(res.content);
-var arr = Array.isArray(data.recettes) ? data.recettes : [];
-if (!arr.length) throw new Error('Aucune recette retournée.');
-state.recettes.items = arr.map(function (r) {
-r.id = uid();
-r.choisie = true;
-r.portions = num(r.portions, Math.max(1, state.membres.length));
-r.portionsVoulues = r.portions;
-r.ingredients = Array.isArray(r.ingredients) ? r.ingredients : [];
-r.etapes = Array.isArray(r.etapes) ? r.etapes : [];
-return r;
-});
-state.recettes.resume = String(data.resume || '');
-state.recettes.generatedAt = new Date().toISOString();
-save(); renderRecettes();
-setStatus('#recettesStatus', state.recettes.items.length + ' recettes proposées. Décochez celles que vous ne voulez pas, puis passez à la liste d’épicerie.', 'ok');
-btn.disabled = false;
-}).catch(function (err) {
-if (tentative < 2) {
-genRecettesTentative(tentative + 1);
-} else {
-setStatus('#recettesStatus', 'Erreur : ' + err.message, 'err');
-btn.disabled = false;
+/* ---- Generation par lots paralleles ----
+   Au lieu d une seule enorme reponse (qui se faisait tronquer et donnait une
+   erreur JSON), la demande est decoupee en lots de quelques recettes envoyes
+   en parallele. Resultat : rien n est trop gros, c est beaucoup plus rapide,
+   et un lot rate n empeche plus les autres d aboutir. */
+function vitesseRecettes() {
+  var v = state.settings.vitesse || 'equilibre';
+  if (v === 'prudent') return { lot: 2, par: 2 };
+  if (v === 'rapide') return { lot: 4, par: 6 };
+  return { lot: 3, par: 4 };
 }
-});
+
+function ordreRepas(nom) {
+  var i = REPAS.indexOf(nom);
+  return i < 0 ? 99 : i;
 }
+
+function trierRecettes() {
+  (state.recettes.items || []).sort(function (a, b) {
+    var da = num(a.jour, 99), db = num(b.jour, 99);
+    if (da !== db) return da - db;
+    return ordreRepas(a.repas) - ordreRepas(b.repas);
+  });
+}
+
+function normaliserRecette(r, creneau) {
+  r.id = uid();
+  r.choisie = true;
+  if (creneau) {
+    if (!num(r.jour)) r.jour = creneau.jour;
+    if (!r.repas) r.repas = creneau.repas;
+  }
+  r.portions = num(r.portions, Math.max(1, state.membres.length));
+  r.portionsVoulues = r.portions;
+  r.ingredients = Array.isArray(r.ingredients) ? r.ingredients : [];
+  r.etapes = Array.isArray(r.etapes) ? r.etapes : [];
+  return r;
+}
+
+function recetteValide(r) {
+  return !!r && String(r.nom || '').trim().length > 1 && (r.ingredients || []).length > 0;
+}
+
+function genLotRecettes(creneaux, p, noLot, nbLots, sys, onProgress) {
+  return aiCall({
+    system: sys,
+    prompt: promptLotRecettes(creneaux, p, noLot, nbLots),
+    maxTokens: Math.min(20000, 3000 + creneaux.length * 3500),
+    onProgress: onProgress
+  }).then(function (res) {
+    var data = extractJSON(res.content);
+    var arr = Array.isArray(data.recettes) ? data.recettes : [];
+    var recs = [];
+    for (var i = 0; i < arr.length; i++) {
+      var r = normaliserRecette(arr[i], creneaux[i]);
+      if (recetteValide(r)) recs.push(r);
+    }
+    if (!recs.length) throw new Error('Aucune recette exploitable dans ce lot.');
+    return recs;
+  });
+}
+
+function resumeRecettes() {
+  var items = state.recettes.items || [];
+  if (!items.length) return '';
+  var cout = 0, eco = 0, nbRab = 0, nbIng = 0;
+  items.forEach(function (r) {
+    cout += num(r.coutTotal);
+    eco += num(r.economie);
+    (r.ingredients || []).forEach(function (g) { nbIng++; if (g.enRabais) nbRab++; });
+  });
+  var pct = nbIng ? Math.round(nbRab * 100 / nbIng) : 0;
+  return items.length + ' recettes, coût estimé ' + money(cout) + ', économie estimée ' + money(eco) +
+    ', ' + pct + ' % des ingrédients pris dans les rabais de la semaine.';
+}
+
+function creneauxManquants(creneaux) {
+  var presents = {};
+  (state.recettes.items || []).forEach(function (r) {
+    presents[num(r.jour) + '|' + normal(r.repas)] = true;
+  });
+  return creneaux.filter(function (c) {
+    var cle = c.jour + '|' + normal(c.repas);
+    if (presents[cle]) { presents[cle] = false; return false; }
+    return true;
+  });
+}
+
 function genRecettes() {
-if (!state.membres.length && !confirm('Aucun profil familial n’est saisi. Générer quand même des recettes standard ?')) return;
-genRecettesTentative(0);
+  if (!state.membres.length && !confirm('Aucun profil familial n’est saisi. Générer quand même des recettes standard ?')) return;
+
+  var p = state.recettes.params;
+  var creneaux = creneauxRecettes(p);
+  var cfg = vitesseRecettes();
+  var sys = [
+    { type: 'text', text: 'Tu es un nutritionniste et chef de cuisine familiale au Quebec. Tu planifies des repas economiques qui respectent des cibles caloriques, des macros et des restrictions alimentaires. Tu reponds UNIQUEMENT avec un objet JSON valide, sans texte avant ni apres, sans bloc de code markdown.' },
+    { type: 'text', text: contexteRecettes(), cache_control: { type: 'ephemeral' } }
+  ];
+
+  var btn = $('#btnGenRecettes');
+  btn.disabled = true;
+  state.recettes.items = [];
+  state.recettes.resume = '';
+  renderRecettes();
+
+  var phase = '';
+
+  function lancerLots(liste, tailleLot) {
+    var lots = decouper(liste, tailleLot);
+    var termines = 0, repris = 0;
+    var recus = [];
+    for (var z = 0; z < lots.length; z++) recus.push(0);
+
+    function maj() {
+      var total = 0;
+      for (var i = 0; i < recus.length; i++) total += recus[i];
+      var k = Math.round(total / 1000);
+      setStatus('#recettesStatus',
+        phase + liste.length + ' recettes en ' + lots.length + ' lot(s) parallèle(s) — ' +
+        termines + '/' + lots.length + ' terminé(s)' +
+        (repris ? ' · ' + repris + ' repris' : '') +
+        (k ? ' · ' + k + ' k caractères reçus' : ''), 'busy');
+    }
+    maj();
+
+    return pool(lots, cfg.par, function (lot, i) {
+      function progres(n) { recus[i] = n; maj(); }
+      return genLotRecettes(lot, p, i + 1, lots.length, sys, progres)
+        .catch(function () {
+          repris++; recus[i] = 0; maj();
+          return genLotRecettes(lot, p, i + 1, lots.length, sys, progres);
+        })
+        .then(function (recs) {
+          termines++;
+          state.recettes.items = (state.recettes.items || []).concat(recs);
+          trierRecettes();
+          state.recettes.generatedAt = new Date().toISOString();
+          save(); renderRecettes(); maj();
+          return recs;
+        }, function (err) {
+          termines++; maj();
+          throw err;
+        });
+    });
+  }
+
+  // Rattrapage : on relance uniquement les creneaux non couverts, en lots de 1,
+  // jusqu a 2 fois. Une grosse demande finit donc par passer en entier.
+  function rattraper(reste) {
+    var manquants = creneauxManquants(creneaux);
+    if (!manquants.length || reste <= 0) return Promise.resolve({ manquants: manquants });
+    phase = 'Complément (' + manquants.length + ' repas) — ';
+    return lancerLots(manquants, 1).then(function () { return rattraper(reste - 1); });
+  }
+
+  phase = 'Génération de ';
+  lancerLots(creneaux, cfg.lot).then(function () {
+    return rattraper(2);
+  }).then(function (bilan) {
+    state.recettes.resume = resumeRecettes();
+    trierRecettes();
+    save(); renderRecettes();
+    btn.disabled = false;
+
+    var n = (state.recettes.items || []).length;
+    if (!n) {
+      setStatus('#recettesStatus', 'Erreur : aucune recette exploitable. Vérifiez votre clé API dans les Réglages, puis réessayez.', 'err');
+      return;
+    }
+    if (bilan.manquants.length) {
+      setStatus('#recettesStatus', n + ' recettes générées sur ' + creneaux.length + ' demandées. ' +
+        bilan.manquants.length + ' repas n’ont pas abouti — recliquez sur « Générer » pour compléter, ou passez la vitesse à « Prudent » dans les Réglages.', 'err');
+    } else {
+      setStatus('#recettesStatus', n + ' recettes proposées. Décochez celles que vous ne voulez pas, puis passez à la liste d’épicerie.', 'ok');
+    }
+  }, function (err) {
+    btn.disabled = false;
+    setStatus('#recettesStatus', 'Erreur : ' + err.message, 'err');
+  });
 }
 
 /* ======================= PAGE 5 : LISTE D EPICERIE ======================= */
@@ -1548,7 +2031,9 @@ L.push('{"note": "conseil court pour economiser", "items": [{"nom": "", "quantit
 aiCall({
 system: 'Tu optimises des listes d epicerie familiales. Tu reponds UNIQUEMENT avec un objet JSON valide, sans texte autour.',
 prompt: L.join('\n'),
-maxTokens: 8000
+model: modeleLeger(),
+maxTokens: 20000,
+onProgress: function (n) { setStatus('#epicerieStatus', 'Optimisation de la liste... ' + Math.round(n / 1000) + ' k caractères', 'busy'); }
 }).then(function (res) {
 var data = extractJSON(res.content);
 var arr = Array.isArray(data.items) ? data.items : [];
@@ -1738,7 +2223,10 @@ system: 'Tu es un assistant qui aide une famille a trouver le prix le plus bas p
 prompt: promptRecherche(q, local),
 webSearch: true,
 maxSearches: 6,
-maxTokens: 3000,
+maxTokens: 8000,
+onProgress: function (n, msg) {
+setStatus('#rechStatus', 'Recherche de « ' + q + ' » dans les circulaires... ' + (msg ? msg : (n ? Math.round(n / 1000) + ' k caractères' : 'recherche en cours')), 'busy');
+},
 userLocation: { type: 'approximate', city: state.rabais.ville, region: state.rabais.province || 'Quebec', country: 'CA', timezone: 'America/Toronto' }
 }).then(function (res) {
 var data = extractJSON(res.content);
@@ -1793,6 +2281,9 @@ $('#btnSettings').addEventListener('click', function () {
 $('#apiKey').value = state.settings.apiKey || '';
 $('#model').value = state.settings.model || MODEL_DEFAUT;
 $('#optWebSearch').checked = !!state.settings.webSearch;
+$('#optVitesse').value = state.settings.vitesse || 'equilibre';
+$('#optRapide').checked = state.settings.rapideActif !== false;
+$('#modelRapide').value = state.settings.modeleRapide || MODEL_RAPIDE;
 $('#modalSettings').classList.add('open');
 });
 $('#btnCloseSettings').addEventListener('click', function () { $('#modalSettings').classList.remove('open'); });
@@ -1801,6 +2292,9 @@ $('#btnSaveSettings').addEventListener('click', function () {
 state.settings.apiKey = $('#apiKey').value.trim();
 state.settings.model = ($('#model').value || '').trim() || MODEL_DEFAUT;
 state.settings.webSearch = $('#optWebSearch').checked;
+state.settings.vitesse = $('#optVitesse').value || 'equilibre';
+state.settings.rapideActif = $('#optRapide').checked;
+state.settings.modeleRapide = ($('#modelRapide').value || '').trim() || MODEL_RAPIDE;
 save(); majEtatIA();
 $('#modalSettings').classList.remove('open');
 toast('Réglages enregistrés.', 'ok');

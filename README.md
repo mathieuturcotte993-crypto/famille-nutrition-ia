@@ -18,11 +18,27 @@ Application web familiale de gestion alimentaire assistée par l'IA (Claude). Pr
 2. Coller votre clé API Anthropic (elle reste dans le navigateur, dans `localStorage`, et n'est jamais partagée ailleurs).
 3. Laisser **Autoriser la recherche web** activé pour que les rabais proviennent de circulaires réelles.
 
-Le modèle utilisé est configurable dans les réglages.
+Le modèle utilisé est configurable dans les réglages, ainsi que :
+
+- **Vitesse de génération** — *Prudent* (2 recettes par lot, 2 lots en parallèle), *Équilibré* (3 et 4, recommandé) ou *Rapide* (4 et 6).
+- **Modèle rapide** — un modèle plus léger (`claude-haiku-4-5` par défaut) pour les tâches très structurées : extraction d'une circulaire collée, optimisation de la liste d'épicerie.
+
+## Grosses demandes et performance
+
+Une demande de 14 jours × 4 repas ne tient pas dans une seule réponse du modèle : l'ancienne version se faisait tronquer et renvoyait une erreur JSON. Le fonctionnement actuel :
+
+- **Découpage en lots parallèles.** Chaque repas demandé devient un créneau (jour + repas). Les créneaux sont regroupés en petits lots envoyés simultanément. Aucune réponse n'est assez longue pour être tronquée, et le temps total correspond au lot le plus lent, pas à la somme des lots.
+- **Affichage progressif.** Les recettes apparaissent lot par lot, avec le nombre de caractères déjà reçus.
+- **Rattrapage automatique.** Un lot en échec est repris une fois ; les créneaux toujours manquants sont ensuite régénérés un par un, deux fois au maximum. Un lot raté ne fait plus perdre les autres.
+- **Contexte mis en cache.** Les profils, les rabais et le contenu du frigo sont envoyés comme bloc `system` avec `cache_control`, donc réutilisés d'un lot à l'autre.
+- **Streaming de bout en bout.** `api/ai.js` diffuse la réponse en NDJSON : la connexion n'est jamais silencieuse, ce qui supprime les coupures de passerelle (504) et les pages HTML renvoyées à la place du JSON.
+- **Auto-continuation.** Si le modèle atteint quand même `max_tokens`, le serveur relance la génération là où elle s'est arrêtée et recolle le texte (jusqu'à 8 fois). `pause_turn` (recherche web longue) est traité de la même façon.
+- **Reprises réseau.** Les erreurs 429 / 5xx / 529 sont réessayées avec temporisation croissante. Les erreurs sont toujours renvoyées en JSON, jamais en HTML.
+- **Analyse JSON tolérante.** Un JSON tronqué est refermé automatiquement (chaînes, objets, tableaux) : les recettes complètes sont conservées au lieu de tout perdre.
 
 ## Déploiement
 
-Déploiement sur Vercel sans configuration : importer le dépôt, aucun *build command*, le dossier racine contient `index.html` et `api/ai.js` est détecté automatiquement comme fonction Node.
+Déploiement sur Vercel sans configuration : importer le dépôt, aucun *build command*, le dossier racine contient `index.html` et `api/ai.js` est détecté automatiquement comme fonction Node. Le fichier `vercel.json` fixe `maxDuration` à 300 s pour `api/ai.js` (le maximum du plan Hobby).
 
 Variable d'environnement optionnelle :
 
